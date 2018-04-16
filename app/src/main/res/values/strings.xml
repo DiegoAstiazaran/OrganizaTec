@@ -1,8 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">OrganizaTec</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="text_bottom_menu_videos">Videos</string>
+    <string name="text_bottom_menu_documents">Documentos</string>
+    <string name="text_bottom_menu_notes">Notas</string>
+    <string name="text_drawer_practice">Material de práctica</string>
+    <string name="text_drawer_theory">Material de teoría</string>
+    <string name="text_drawer_information">Información</string>
+    <string name="text_drawer_info_teacher">Maestro</string>
+    <string name="text_drawer_info_course">Curso</string>
+
 </resources>
