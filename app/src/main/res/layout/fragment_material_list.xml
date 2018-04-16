@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="itesm.mx.organizatec.MaterialListFragment">
 
     <LinearLayout
@@ -32,33 +33,98 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <Switch
-                android:id="@+id/switch_sort_by"
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
                 android:layout_weight=".5"
-                android:textOn="Name"
-                android:textOff="Date"/>
+                android:gravity="center_horizontal">
 
-            <Switch
-                android:id="@+id/switch_sort_order"
+                <TextView
+                    android:id="@+id/text_header_radio_group_order_by"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="5dp"
+                    android:text="Desplegar por" />
+
+                <RadioGroup
+                    android:id="@+id/radio_group_order_by"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="5dp"
+                    android:orientation='horizontal'>
+
+                    <RadioButton
+                        android:id="@+id/radio_button_order_by_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nombre" />
+
+                    <RadioButton
+                        android:id="@+id/radio_button_order_by_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Fecha" />
+
+                </RadioGroup>
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight=".5"
-                android:textOn="Name"
-                android:textOff="Date"/>
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/text_header_radio_group_sort_order"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="5dp"
+                    android:text="Orden" />
+
+                <RadioGroup
+                    android:id="@+id/radio_group_sort_order"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="5dp"
+                    android:orientation='horizontal'>
+
+                    <RadioButton
+                        android:id="@+id/radio_button_sort_order_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Desc" />
+
+                    <RadioButton
+                        android:id="@+id/radio_button_sort_order_asc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Asc" />
+
+                </RadioGroup>
+
+            </RelativeLayout>
 
         </LinearLayout>
 
         <ListView
-            android:id="@android:id/list"
+            android:id="@+id/list_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4"/>
+            android:layout_weight="5"/>
 
     </LinearLayout>
-
-
 
 </FrameLayout>

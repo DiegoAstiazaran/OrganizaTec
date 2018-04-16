@@ -41,6 +41,24 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_doc_practice);
+
+        Menu menu = navigationView.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+            if (item.isChecked()) {
+                getSupportActionBar().setTitle(item.getTitle());
+            }
+        }
+
+        MaterialFragment fragment = new MaterialFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(MaterialFragment.MATERIAL_TYPE, getSupportActionBar().getTitle().toString());
+        fragment.setArguments(bundle);
+
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment).commit();
 
     }
 
