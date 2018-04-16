@@ -4,9 +4,4 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#FFFFFF</color>
-
-    <color name="sekizbit_switch_background">#294A6D</color>
-    <color name="sekizbit_switch_stroke">#294A6D</color>
-    <color name="sekizbit_switch_thumb">#ffffff</color>
-
 </resources>

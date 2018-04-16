@@ -1,7 +1,6 @@
 package itesm.mx.organizatec;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +11,8 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class MaterialListFragment extends Fragment {
 
@@ -115,26 +111,20 @@ public class MaterialListFragment extends Fragment {
     }
 
     public void onRadioButtonClicked(View view) {
-        // Is the button now checked?
         boolean checked = ((RadioButton) view).isChecked();
 
-        // Check which radio button was clicked
         switch(view.getId()) {
             case R.id.radio_button_order_by_name:
                 if (checked)
-                    // Pirates are the best
                     break;
             case R.id.radio_button_order_by_date:
                 if (checked)
-                    // Ninjas rule
                     break;
             case R.id.radio_button_sort_order_desc:
                 if (checked)
-                    // Ninjas rule
                     break;
             case R.id.radio_button_sort_order_asc:
                 if (checked)
-                    // Ninjas rule
                     break;
         }
     }
