@@ -91,7 +91,7 @@ public class MaterialOperations {
                         ArrayList<byte[]> images = getNoteImages(noteId);
                         Material material = new Material(
                                 noteId,
-                                cursor.getString(1),
+                                noteType,
                                 cursor.getString(2),
                                 cursor.getString(3),
                                 cursor.getString(4),
@@ -102,8 +102,9 @@ public class MaterialOperations {
 
                         materials.add(material);
                     } else {
-                        Material material = new Material(Integer.parseInt(cursor.getString(0)),
-                                cursor.getString(1),
+                        Material material = new Material(
+                                Integer.parseInt(cursor.getString(0)),
+                                noteType,
                                 cursor.getString(2),
                                 cursor.getString(3),
                                 cursor.getString(4),
