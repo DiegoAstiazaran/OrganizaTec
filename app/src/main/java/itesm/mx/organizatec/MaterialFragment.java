@@ -1,5 +1,6 @@
 package itesm.mx.organizatec;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -10,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 public class MaterialFragment extends Fragment {
 
@@ -47,7 +47,17 @@ public class MaterialFragment extends Fragment {
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "CLICK EN FAB", Toast.LENGTH_SHORT).show();
+                int itemId = mViewPager.getCurrentItem();
+                if(itemId == 2) {
+                    Intent intent = new Intent(getContext(), NewNoteActivity.class);
+                    startActivity(intent);
+                } else {
+                    String materialType = itemId == 0 ? "Video" : "Document";
+                    Intent intent = new Intent(getContext(), NewDocumentVideoActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("type", materialType);
+                    startActivity(intent);
+                }
             }
         });
 

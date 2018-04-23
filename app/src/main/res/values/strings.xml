@@ -17,4 +17,7 @@
     <string name="text_drawer_info_teacher">Maestro</string>
     <string name="text_drawer_info_course">Curso</string>
 
+    <string name="save">Save</string>
+    <string name="continue_text">Continue</string>
+
 </resources>
