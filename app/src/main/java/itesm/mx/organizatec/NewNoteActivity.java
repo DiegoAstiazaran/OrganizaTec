@@ -21,7 +21,11 @@ import java.util.ArrayList;
 
 public class NewNoteActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static final String MATERIAL_TYPE = "material_type";
+
     private static final int ADD_NOTE_IMAGE_CODE = 1;
+
+    private String materialType;
 
     NoteImageAdapter imageAdapter;
 
@@ -32,13 +36,21 @@ public class NewNoteActivity extends AppCompatActivity implements View.OnClickLi
 
     Material material;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_note);
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            materialType = bundle.getString(MATERIAL_TYPE);
+        }
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_24dp);
+        getSupportActionBar().setTitle("Nueva nota " + materialType);
+
 
         gvImages = (GridView) findViewById(R.id.gridView_note_images);
         btnAddImage = (Button) findViewById(R.id.btn_add_note_image);
@@ -122,8 +134,7 @@ public class NewNoteActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode==RESULT_OK) {
             switch(requestCode){
                 case ADD_NOTE_IMAGE_CODE:

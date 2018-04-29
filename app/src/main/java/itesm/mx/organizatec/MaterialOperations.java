@@ -56,7 +56,7 @@ public class MaterialOperations {
         return newRowId;
     }
 
-    public long addNoteImage(byte[] image, long noteId) {
+    private long addNoteImage(byte[] image, long noteId) {
         long newRowId = 0;
         try {
             ContentValues values = new ContentValues();
@@ -126,7 +126,7 @@ public class MaterialOperations {
 
     }
 
-    public ArrayList<byte[]> getNoteImages(long noteId) {
+    private ArrayList<byte[]> getNoteImages(long noteId) {
         ArrayList<byte[]> images = new ArrayList<>();
 
         String query = "Select * FROM " + DataBaseSchema.NoteImageTable.TABLE_NAME + " WHERE " + DataBaseSchema.NoteImageTable.COLUMN_NAME_NOTE_ID + "=" + noteId;

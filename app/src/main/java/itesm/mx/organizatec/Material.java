@@ -1,8 +1,11 @@
 package itesm.mx.organizatec;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class Material {
+public class Material implements Parcelable {
 
     private long id;
     private String type;
@@ -35,6 +38,16 @@ public class Material {
         this.date = date;
         this.content = content;
         this.images = images;
+    }
+
+    public Material(String type, String name, String topic, String partial, String date, String content) {
+        this.type = type;
+        this.name = name;
+        this.topic = topic;
+        this.partial = partial;
+        this.date = date;
+        this.content = content;
+        this.images = null;
     }
 
     public long getId() {
@@ -100,4 +113,47 @@ public class Material {
     public void setImages(ArrayList<byte[]> images) {
         this.images = images;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeLong(id);
+        out.writeString(type);
+        out.writeString(name);
+        out.writeString(topic);
+        out.writeString(partial);
+        out.writeString(date);
+        out.writeString(content);
+        out.writeSerializable(images);
+    }
+
+    private Material(Parcel in) {
+        id = in.readLong();
+        type = in.readString();
+        name = in.readString();
+        topic = in.readString();
+        partial = in.readString();
+        date = in.readString();
+        content = in.readString();
+        images = (ArrayList<byte[]>) in.readSerializable();
+    }
+
+    public static final Parcelable.Creator<Material> CREATOR
+            = new Parcelable.Creator<Material>() {
+
+        @Override
+        public Material createFromParcel(Parcel in) {
+            return new Material(in);
+        }
+
+        @Override
+        public Material[] newArray(int size) {
+            return new Material[size];
+        }
+    };
 }

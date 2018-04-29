@@ -3,6 +3,7 @@ package itesm.mx.organizatec;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,17 +13,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class MaterialFragment extends Fragment {
+public class MaterialPagerFragment extends Fragment {
 
-    final static String MATERIAL_TYPE = "material";
+    final static String MATERIAL_TYPE = "material_type";
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
 
+    private String materialType;
+
     FloatingActionButton fabAdd;
 
-    public MaterialFragment() {
+    public MaterialPagerFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            materialType = args.getString(MATERIAL_TYPE);
+        }
+
     }
 
     @Override
@@ -35,12 +49,12 @@ public class MaterialFragment extends Fragment {
         mViewPager = (ViewPager) view.findViewById(R.id.view_pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        mViewPager.setCurrentItem(1);
-
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
+        mViewPager.setCurrentItem(1);
 
         fabAdd = (FloatingActionButton)view.findViewById(R.id.fab_add_material);
 
@@ -48,15 +62,27 @@ public class MaterialFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 int itemId = mViewPager.getCurrentItem();
+
+                String fragmentTag = "android:switcher:" + R.id.view_pager + ":" + itemId;
+
+                Fragment fragment = getChildFragmentManager().findFragmentByTag(fragmentTag);
+
                 if(itemId == 2) {
                     Intent intent = new Intent(getContext(), NewNoteActivity.class);
-                    startActivity(intent);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(NewDocumentVideoActivity.MATERIAL_TYPE, materialType);
+                    intent.putExtras(bundle);
+
+                    fragment.startActivityForResult(intent, MaterialListFragment.NEW_MATERIAL_FRAGMENT_KEY);
                 } else {
-                    String materialType = itemId == 0 ? "Video" : "Document";
+                    String contentType = itemId == 0 ? "Video" : "Document";
                     Intent intent = new Intent(getContext(), NewDocumentVideoActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString("type", materialType);
-                    startActivity(intent);
+                    bundle.putString(NewDocumentVideoActivity.MATERIAL_TYPE, materialType);
+                    bundle.putString(NewDocumentVideoActivity.CONTENT_TYPE, contentType);
+                    intent.putExtras(bundle);
+
+                    fragment.startActivityForResult(intent, MaterialListFragment.NEW_MATERIAL_FRAGMENT_KEY);
                 }
             }
         });
@@ -82,6 +108,11 @@ public class MaterialFragment extends Fragment {
             // Show 3 total pages.
             return 3;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
     }
 
 }

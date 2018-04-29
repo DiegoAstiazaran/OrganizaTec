@@ -23,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewNoteActivity" />
-        <activity android:name=".NewDocumentVideoActivity"></activity>
+        <activity android:name=".NewDocumentVideoActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize"/>
     </application>
 
 </manifest>

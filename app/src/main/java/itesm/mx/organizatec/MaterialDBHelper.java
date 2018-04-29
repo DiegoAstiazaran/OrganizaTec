@@ -16,30 +16,30 @@ public class MaterialDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String CREATE_MATERIAL_TABLE = "CREATE TABLE " +
+        String CREATE_MATERIAL_TABLE = "CREATE TABLE IF NOT EXISTS " +
                 DataBaseSchema.MaterialTable.TABLE_NAME +
                 "(" +
-                DataBaseSchema.MaterialTable._ID + " INTEGER PRIMARY KEY," +
-                DataBaseSchema.MaterialTable.COLUMN_NAME_TYPE + " TEXT," +
-                DataBaseSchema.MaterialTable.COLUMN_NAME_NAME + " TEXT," +
-                DataBaseSchema.MaterialTable.COLUMN_NAME_TOPIC + " TEXT," +
-                DataBaseSchema.MaterialTable.COLUMN_NAME_PARTIAL + " TEXT," +
-                DataBaseSchema.MaterialTable.COLUMN_NAME_DATE + " TEXT," +
-                DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT + " TEXT," +
+                DataBaseSchema.MaterialTable._ID + " INTEGER PRIMARY KEY, " +
+                DataBaseSchema.MaterialTable.COLUMN_NAME_TYPE + " TEXT, " +
+                DataBaseSchema.MaterialTable.COLUMN_NAME_NAME + " TEXT, " +
+                DataBaseSchema.MaterialTable.COLUMN_NAME_TOPIC + " TEXT, " +
+                DataBaseSchema.MaterialTable.COLUMN_NAME_PARTIAL + " TEXT, " +
+                DataBaseSchema.MaterialTable.COLUMN_NAME_DATE + " TEXT, " +
+                DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT + " TEXT, " +
                 "CHECK (" + DataBaseSchema.MaterialTable.COLUMN_NAME_TYPE +
-                " IN (\"Video\", \"Document\", \"Note\"))" +
+                " IN (\"Video\", \"Document\", \"Note\")), " +
                 "CHECK (" + DataBaseSchema.MaterialTable.COLUMN_NAME_PARTIAL +
                 " IN (\"Primer Parcial\", \"Segundo Parcial\", \"Tercer Parcial\", \"Final\"))" +
                 ")";
 
         db.execSQL(CREATE_MATERIAL_TABLE);
 
-        String CREATE_NOTEIMAGE_TABLE = "CREATE TABLE " +
+        String CREATE_NOTEIMAGE_TABLE = "CREATE TABLE IF NOT EXISTS " +
                 DataBaseSchema.MaterialTable.TABLE_NAME +
                 "(" +
-                DataBaseSchema.NoteImageTable._ID + " INTEGER PRIMARY KEY," +
-                DataBaseSchema.NoteImageTable.COLUMN_NAME_NOTE_ID + " INTEGER," +
-                DataBaseSchema.NoteImageTable.COLUMN_NAME_IMAGE + " BLOB," +
+                DataBaseSchema.NoteImageTable._ID + " INTEGER PRIMARY KEY, " +
+                DataBaseSchema.NoteImageTable.COLUMN_NAME_NOTE_ID + " INTEGER, " +
+                DataBaseSchema.NoteImageTable.COLUMN_NAME_IMAGE + " BLOB, " +
                 "FOREIGN KEY(" + DataBaseSchema.NoteImageTable.COLUMN_NAME_NOTE_ID + ") REFERENCES " +
                 DataBaseSchema.MaterialTable.TABLE_NAME +
                 "(" + DataBaseSchema.MaterialTable._ID + ")" +

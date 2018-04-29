@@ -37,7 +37,8 @@
             android:padding="10dp"
             android:textSize="18sp"
             android:scrollbars="vertical"
-            android:background="@drawable/text_box_background"/>
+            android:background="@drawable/text_box_background"
+            android:inputType="textCapSentences"/>
 
     </RelativeLayout>
 

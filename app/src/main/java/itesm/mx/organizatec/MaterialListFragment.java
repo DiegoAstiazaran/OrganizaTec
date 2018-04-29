@@ -1,5 +1,6 @@
 package itesm.mx.organizatec;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,13 +17,21 @@ import java.util.Arrays;
 
 public class MaterialListFragment extends Fragment {
 
+    MaterialOperations dbOperations;
+
     private static final String ARG_SECTION_NUMBER = "section_number";
+    public static final Integer NEW_MATERIAL_FRAGMENT_KEY = 2;
+    public static final String MATERIAL_OBJECT = "material_object";
 
     Spinner spinnerTopic;
     Spinner spinnerPartial;
     RadioGroup radioGroupOrderBy;
     RadioGroup radioGroupSortOrder;
     ListView listViewMaterial;
+
+    ArrayList<Material> materials;
+
+    MaterialAdapter materialAdapter;
 
     public MaterialListFragment() {
     }
@@ -36,6 +45,19 @@ public class MaterialListFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        dbOperations = new MaterialOperations(getContext());
+        dbOperations.open();
+
+        materials = dbOperations.getAllMaterials();
+
+        materialAdapter = new MaterialAdapter(getContext(), materials);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_material_list, container, false);
@@ -46,18 +68,10 @@ public class MaterialListFragment extends Fragment {
         radioGroupSortOrder = (RadioGroup) rootView.findViewById(R.id.radio_group_sort_order);
         listViewMaterial = (ListView) rootView.findViewById(R.id.list_view);
 
-        // TODO: Define proper list of partials and topics - get them from DB
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (getContext(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.partials));
 
-        ArrayList<String> partialList = new ArrayList<>();
-        partialList.add("Primer parcial");
-        partialList.add("Segundo parcial");
-        partialList.add("Tercer parcial");
-        partialList.add("Final");
-
-        ArrayAdapter<String> partialAdapter = new ArrayAdapter<>
-                (getContext(), android.R.layout.simple_spinner_dropdown_item, partialList);
-
-        spinnerPartial.setAdapter(partialAdapter);
+        spinnerPartial.setAdapter(adapter);
 
         spinnerPartial.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
@@ -100,12 +114,7 @@ public class MaterialListFragment extends Fragment {
 
         });
 
-        ArrayList<String> materialList = new ArrayList<>(Arrays.asList("Nota 1", "Nota 2","Nota 3","Nota 4","Nota 5","Nota 6","Nota 7","Nota 8", "Nota 9", "Nota 10", "Nota 11", "Nota 12", "Nota 13"));
-
-        ArrayAdapter<String> listViewAdapter = new ArrayAdapter<>
-                (getContext(), android.R.layout.simple_list_item_1, materialList);
-
-        listViewMaterial.setAdapter(listViewAdapter);
+        listViewMaterial.setAdapter(materialAdapter);
 
         return rootView;
     }
@@ -128,5 +137,26 @@ public class MaterialListFragment extends Fragment {
                     break;
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == -1 && requestCode == NEW_MATERIAL_FRAGMENT_KEY) {
+            Material newMaterial = data.getExtras().getParcelable(MATERIAL_OBJECT);
+
+            materials.add(newMaterial);
+
+            materialAdapter.notifyDataSetChanged();
+
+
+        }
+
+    }
+
 
 }
