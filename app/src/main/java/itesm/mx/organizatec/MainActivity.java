@@ -39,9 +39,11 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        MaterialFragment fragment = new MaterialFragment();
+        MaterialPagerFragment fragment = new MaterialPagerFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(MaterialFragment.MATERIAL_TYPE, getSupportActionBar().getTitle().toString());
+        String materialType = getSupportActionBar().getTitle().toString().replace("Material ", "");
+        bundle.putString(MaterialPagerFragment.MATERIAL_TYPE, materialType);
+
         fragment.setArguments(bundle);
 
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -88,9 +90,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_doc_practice || id == R.id.nav_doc_theory) {
-            MaterialFragment fragment = new MaterialFragment();
+            MaterialPagerFragment fragment = new MaterialPagerFragment();
             Bundle bundle = new Bundle();
-            bundle.putString(MaterialFragment.MATERIAL_TYPE, item.getTitle().toString() );
+            String materialType = item.getTitle().toString().replace("Material ", "");
+            bundle.putString(MaterialPagerFragment.MATERIAL_TYPE, materialType);
             fragment.setArguments(bundle);
 
             getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);

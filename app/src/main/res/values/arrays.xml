@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="partials">
+        <item>Primer Parcial</item>
+        <item>Segundo Parcial</item>
+        <item>Tercer Parcial</item>
+        <item>Final</item>
+    </string-array>
+</resources>
