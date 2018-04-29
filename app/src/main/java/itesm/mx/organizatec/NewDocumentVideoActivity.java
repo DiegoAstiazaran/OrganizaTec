@@ -84,16 +84,16 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         calendarNote = Calendar.getInstance();
         calendarNote.setTime(new Date());
 
-         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,int dayOfMonth) {
-                calendarNote.set(Calendar.YEAR, year);
-                calendarNote.set(Calendar.MONTH, monthOfYear);
-                calendarNote.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,int dayOfMonth) {
+            calendarNote.set(Calendar.YEAR, year);
+            calendarNote.set(Calendar.MONTH, monthOfYear);
+            calendarNote.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                updateLabel();
-            }
+            updateLabel();
+        }
 
         };
 
@@ -104,6 +104,8 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
                         calendarNote.get(Calendar.YEAR), calendarNote.get(Calendar.MONTH), calendarNote.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+
+        updateLabel();
 
         etDocumentUrl.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
@@ -170,21 +172,12 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         if (!checkTextField(etDocumentUrl))
             return false;
 
-//        String url = etDocumentUrl.getText().toString();
-//
-//        try {
-//            new URL(url).toURI();
-//        } catch (Exception e) {
-//            Toast.makeText(getApplicationContext(), "El URL del documento no es válido", Toast.LENGTH_SHORT).show();
-//            return false;
-//        }
-
         Material material = new Material(contentType, etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), calendarNote.getTime().toString(), etDocumentUrl.getText().toString() );
 
         try {
             dbOperations.addMaterial(material);
         } catch (Exception e) {
-
+            return false;
         }
 
         Intent intent = new Intent();

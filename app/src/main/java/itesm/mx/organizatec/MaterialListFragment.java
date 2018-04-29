@@ -19,9 +19,11 @@ public class MaterialListFragment extends Fragment {
 
     MaterialOperations dbOperations;
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final String CONTENT_TYPE = "content_type";
     public static final Integer NEW_MATERIAL_FRAGMENT_KEY = 2;
     public static final String MATERIAL_OBJECT = "material_object";
+
+    private String contentType;
 
     Spinner spinnerTopic;
     Spinner spinnerPartial;
@@ -39,7 +41,8 @@ public class MaterialListFragment extends Fragment {
     public static MaterialListFragment newInstance(int sectionNumber) {
         MaterialListFragment fragment = new MaterialListFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        String contentType = sectionNumber == 0 ? "Video" : sectionNumber == 1 ? "Document" : "Note";
+        args.putString(CONTENT_TYPE, contentType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,10 +51,15 @@ public class MaterialListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            contentType = bundle.getString(CONTENT_TYPE);
+        }
+
         dbOperations = new MaterialOperations(getContext());
         dbOperations.open();
 
-        materials = dbOperations.getAllMaterials();
+        materials = dbOperations.getAllMaterials(contentType);
 
         materialAdapter = new MaterialAdapter(getContext(), materials);
 

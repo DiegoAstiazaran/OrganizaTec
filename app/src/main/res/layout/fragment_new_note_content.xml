@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="@dimen/activity_margin"
+    android:weightSum="10"
+    tools:context=".NewNoteActivity">
+
+    <GridView
+        android:id="@+id/gridView_note_images"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:numColumns="3" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6">
+
+        <Button
+            android:id="@+id/btn_add_note_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
+            android:text="Agregar Imagen"/>
+
+        <EditText
+            android:id="@+id/edit_note_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/btn_add_note_image"
+            android:gravity="top|left"
+            android:padding="10dp"
+            android:textSize="18sp"
+            android:scrollbars="vertical"
+            android:background="@drawable/text_box_background"
+            android:inputType="textCapSentences"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

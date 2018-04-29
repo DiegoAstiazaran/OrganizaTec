@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="itesm.mx.organizatec">
 
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -23,8 +23,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewNoteActivity" />
-        <activity android:name=".NewDocumentVideoActivity"
-            android:windowSoftInputMode="stateVisible|adjustResize"/>
+        <activity
+            android:name=".NewDocumentVideoActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
     </application>
 
 </manifest>

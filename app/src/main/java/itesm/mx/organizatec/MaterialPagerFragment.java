@@ -100,7 +100,7 @@ public class MaterialPagerFragment extends Fragment {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a MaterialListFragment
-            return MaterialListFragment.newInstance(position + 1);
+            return MaterialListFragment.newInstance(position);
         }
 
         @Override

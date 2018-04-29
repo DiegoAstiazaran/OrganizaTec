@@ -73,11 +73,12 @@ public class MaterialOperations {
         return newRowId;
     }
 
-    public ArrayList<Material> getAllMaterials() {
+    public ArrayList<Material> getAllMaterials(String contentType) {
 
         ArrayList<Material> materials = new ArrayList<>();
 
-        String selectQuery = "SELECT * FROM " + DataBaseSchema.MaterialTable.TABLE_NAME;
+        String selectQuery = "SELECT * FROM " + DataBaseSchema.MaterialTable.TABLE_NAME +
+                            " WHERE " + DataBaseSchema.MaterialTable.COLUMN_NAME_TYPE + " = \"" + contentType + "\"";
 
         try {
             Cursor cursor = db.rawQuery(selectQuery, null);

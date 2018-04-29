@@ -1,9 +1,13 @@
 package itesm.mx.organizatec;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,23 +23,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class NewNoteActivity extends AppCompatActivity implements View.OnClickListener {
+public class NewNoteActivity extends AppCompatActivity implements NewNoteContentFragment.OnContinueListener, NewNoteDetailFragment.OnSaveListener{
 
     public static final String MATERIAL_TYPE = "material_type";
 
-    private static final int ADD_NOTE_IMAGE_CODE = 1;
-
     private String materialType;
-
-    NoteImageAdapter imageAdapter;
-
-    GridView gvImages;
-    Button btnAddImage;
-    EditText etNoteContent;
-    ArrayList<Bitmap> noteImages;
 
     Material material;
 
+    MaterialOperations dbOperations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,82 +45,15 @@ public class NewNoteActivity extends AppCompatActivity implements View.OnClickLi
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_24dp);
-        getSupportActionBar().setTitle("Nueva nota " + materialType);
-
-
-        gvImages = (GridView) findViewById(R.id.gridView_note_images);
-        btnAddImage = (Button) findViewById(R.id.btn_add_note_image);
-        etNoteContent = (EditText) findViewById(R.id.edit_note_content);
-
-        noteImages = new ArrayList<>();
-
-        btnAddImage.setOnClickListener(this);
-
-        imageAdapter = new NoteImageAdapter(this, noteImages);
-
-        gvImages.setAdapter(imageAdapter);
 
         material = new Material();
-    }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_add_note_image:
-                Intent intent = new Intent();
+        getSupportActionBar().setTitle("Nueva nota " + materialType);
 
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select image"), ADD_NOTE_IMAGE_CODE);
-                break;
-        }
-    }
+        NewNoteContentFragment fragment = new NewNoteContentFragment();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+        getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment, "NewNoteContentFragment").addToBackStack(null).commit();
 
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.continue_nav_bar, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.continue_menu_button:
-                String noteContent = etNoteContent.getText().toString();
-
-                if (noteContent.trim().length() == 0 && noteImages.size() == 0) {
-                    Toast.makeText(getApplicationContext(), "Please add some text or images.", Toast.LENGTH_SHORT).show();
-                } else {
-                    ArrayList<byte[]> images = new ArrayList<>();
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-                    for(Bitmap bitmap: noteImages){
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        byte[] byteArray = stream.toByteArray();
-                        images.add(byteArray);
-                    }
-
-                    material.setImages(images);
-                    material.setContent(noteContent);
-
-//                    Intent intent = new Intent(getApplicationContext(), NewNoteDetailActivity.class);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putParcelable(NewNoteDetailActivity.MATERIAL, material);
-//                    startActivity(intent);
-
-                    Toast.makeText(getApplicationContext(), "CONTINUE!", Toast.LENGTH_SHORT).show();
-                }
-
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
     }
 
     @Override
@@ -133,29 +62,63 @@ public class NewNoteActivity extends AppCompatActivity implements View.OnClickLi
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode==RESULT_OK) {
-            switch(requestCode){
-                case ADD_NOTE_IMAGE_CODE:
-                    if (data != null) {
-                        Uri contentURI = data.getData();
-                        try {
-                            Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                            noteImages.add(imageBitmap);
-                            imageAdapter.notifyDataSetChanged();
-                            Toast.makeText(getApplicationContext(), "Image Saved!", Toast.LENGTH_SHORT).show();
+    @SuppressLint("RestrictedApi")
+    public void continueNewNote(ArrayList<byte[]> images, String noteContent) {
+        material.setImages(images);
+        material.setContent(noteContent);
 
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "Failed!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+        NewNoteDetailFragment fragment = new NewNoteDetailFragment();
 
-                    break;
-            }
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, "NewNoteDetailFragment").addToBackStack(null).commit();
+
+    }
+
+    public void saveNewNote(String name, String topic, String partial, String date) {
+
+        material.setName(name);
+        material.setTopic(topic);
+        material.setPartial(partial);
+        material.setDate(date);
+        material.setType("Note");
+
+        dbOperations = new MaterialOperations(getApplicationContext());
+        dbOperations.open();
+
+        try {
+            dbOperations.addMaterial(material);
+        } catch (Exception e) {
 
         }
+
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+
+        bundle.putParcelable(MaterialListFragment.MATERIAL_OBJECT, material);
+
+        intent.putExtras(bundle);
+
+        setResult(RESULT_OK, intent);
+
+        finish();
+
     }
+
+    @Override
+    public void onBackPressed() {
+
+        Fragment contentFragment = getSupportFragmentManager().findFragmentByTag("NewNoteContentFragment");
+
+        if(contentFragment != null && contentFragment.isVisible()) {
+            finish();
+        }
+
+        Fragment detailFragment = getSupportFragmentManager().findFragmentByTag("NewNoteDetailFragment");
+
+        if(detailFragment != null && detailFragment.isVisible()) {
+            super.onBackPressed();
+        }
+
+    }
+
 
 }
