@@ -1,5 +1,6 @@
 package itesm.mx.organizatec;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,7 +17,13 @@ import java.util.Arrays;
 
 public class MaterialListFragment extends Fragment {
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
+    MaterialOperations dbOperations;
+
+    private static final String CONTENT_TYPE = "content_type";
+    public static final Integer NEW_MATERIAL_FRAGMENT_KEY = 2;
+    public static final String MATERIAL_OBJECT = "material_object";
+
+    private String contentType;
 
     Spinner spinnerTopic;
     Spinner spinnerPartial;
@@ -24,15 +31,38 @@ public class MaterialListFragment extends Fragment {
     RadioGroup radioGroupSortOrder;
     ListView listViewMaterial;
 
+    ArrayList<Material> materials;
+
+    MaterialAdapter materialAdapter;
+
     public MaterialListFragment() {
     }
 
     public static MaterialListFragment newInstance(int sectionNumber) {
         MaterialListFragment fragment = new MaterialListFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        String contentType = sectionNumber == 0 ? "Video" : sectionNumber == 1 ? "Document" : "Note";
+        args.putString(CONTENT_TYPE, contentType);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            contentType = bundle.getString(CONTENT_TYPE);
+        }
+
+        dbOperations = new MaterialOperations(getContext());
+        dbOperations.open();
+
+        materials = dbOperations.getAllMaterials(contentType);
+
+        materialAdapter = new MaterialAdapter(getContext(), materials);
+
     }
 
     @Override
@@ -46,18 +76,10 @@ public class MaterialListFragment extends Fragment {
         radioGroupSortOrder = (RadioGroup) rootView.findViewById(R.id.radio_group_sort_order);
         listViewMaterial = (ListView) rootView.findViewById(R.id.list_view);
 
-        // TODO: Define proper list of partials and topics - get them from DB
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (getContext(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.partials));
 
-        ArrayList<String> partialList = new ArrayList<>();
-        partialList.add("Primer parcial");
-        partialList.add("Segundo parcial");
-        partialList.add("Tercer parcial");
-        partialList.add("Final");
-
-        ArrayAdapter<String> partialAdapter = new ArrayAdapter<>
-                (getContext(), android.R.layout.simple_spinner_dropdown_item, partialList);
-
-        spinnerPartial.setAdapter(partialAdapter);
+        spinnerPartial.setAdapter(adapter);
 
         spinnerPartial.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
@@ -100,12 +122,7 @@ public class MaterialListFragment extends Fragment {
 
         });
 
-        ArrayList<String> materialList = new ArrayList<>(Arrays.asList("Nota 1", "Nota 2","Nota 3","Nota 4","Nota 5","Nota 6","Nota 7","Nota 8", "Nota 9", "Nota 10", "Nota 11", "Nota 12", "Nota 13"));
-
-        ArrayAdapter<String> listViewAdapter = new ArrayAdapter<>
-                (getContext(), android.R.layout.simple_list_item_1, materialList);
-
-        listViewMaterial.setAdapter(listViewAdapter);
+        listViewMaterial.setAdapter(materialAdapter);
 
         return rootView;
     }
@@ -128,5 +145,26 @@ public class MaterialListFragment extends Fragment {
                     break;
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == -1 && requestCode == NEW_MATERIAL_FRAGMENT_KEY) {
+            Material newMaterial = data.getExtras().getParcelable(MATERIAL_OBJECT);
+
+            materials.add(newMaterial);
+
+            materialAdapter.notifyDataSetChanged();
+
+
+        }
+
+    }
+
 
 }
