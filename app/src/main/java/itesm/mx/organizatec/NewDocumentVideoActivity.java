@@ -19,8 +19,10 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +54,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
     TextInputEditText etTopic;
     TextInputEditText etDocumentUrl;
     TextInputEditText etDate;
+    ImageView btnInternet;
 
     Spinner spinnerPartial;
 
@@ -78,6 +81,9 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         etDocumentUrl = (TextInputEditText) findViewById(R.id.edit_content_document_url);
         spinnerPartial = (Spinner) findViewById(R.id.spinner_partial);
         etDate = (TextInputEditText) findViewById(R.id.edit_date);
+        btnInternet = (ImageView) findViewById(R.id.btn_internet);
+
+        etDocumentUrl.setText("http://");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>
                 (getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.partials));
@@ -116,6 +122,13 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
                     return true;
                 }
                 return false;
+            }
+        });
+
+        btnInternet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDocumentUrl();
             }
         });
 
@@ -203,7 +216,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
 
         if (originalMaterial == null) {
-            Material material = new Material(materialType, contentType, etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), etDate.getText().toString(), etDocumentUrl.getText().toString() );
+            Material material = new Material(materialType, contentType, etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), etDate.getText().toString(), etDocumentUrl.getText().toString().replace(" ",""));
 
             try {
                 dbOperations = new MaterialOperations(getApplicationContext());
@@ -221,7 +234,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
             originalMaterial.setTopic(etTopic.getText().toString());
             originalMaterial.setPartial(spinnerPartial.getSelectedItem().toString());
             originalMaterial.setDate(etDate.getText().toString());
-            originalMaterial.setContent(etDocumentUrl.getText().toString());
+            originalMaterial.setContent(etDocumentUrl.getText().toString().replace(" ",""));
 
             try {
                 dbOperations = new MaterialOperations(getApplicationContext());
@@ -310,4 +323,18 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         return title;
     }
 
+    private void openDocumentUrl() {
+        String url = etDocumentUrl.getText().toString().replace(" ","");
+
+        if(!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
+        }
+
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+        } catch (Exception e) {
+
+        }
+
+    }
 }
