@@ -26,9 +26,12 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -52,6 +55,8 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
 
     Calendar calendarNote;
 
+    Material originalMaterial;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,16 +64,12 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
+            originalMaterial = bundle.getParcelable("material_object");
             materialType = bundle.getString(MATERIAL_TYPE);
             contentType = bundle.getString(CONTENT_TYPE);
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_24dp);
-
-        String titleContentType = contentType.equals("Video") ? "video" : "documento";
-
-        getSupportActionBar().setTitle("Nuevo " + titleContentType + getMaterialTypeActionBarTitle(materialType));
 
         etName = (TextInputEditText) findViewById(R.id.edit_content_name);
         etTopic = (TextInputEditText) findViewById(R.id.edit_content_topic);
@@ -85,16 +86,14 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         calendarNote.setTime(new Date());
 
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,int dayOfMonth) {
+                calendarNote.set(Calendar.YEAR, year);
+                calendarNote.set(Calendar.MONTH, monthOfYear);
+                calendarNote.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear,int dayOfMonth) {
-            calendarNote.set(Calendar.YEAR, year);
-            calendarNote.set(Calendar.MONTH, monthOfYear);
-            calendarNote.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-            updateLabel();
-        }
-
+                updateLabel();
+            }
         };
 
         etDate.setOnClickListener(new View.OnClickListener() {
@@ -104,8 +103,6 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
                         calendarNote.get(Calendar.YEAR), calendarNote.get(Calendar.MONTH), calendarNote.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-
-        updateLabel();
 
         etDocumentUrl.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
@@ -118,10 +115,30 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
                 }
                 return false;
             }
-         });
+        });
 
-        dbOperations = new MaterialOperations(getApplicationContext());
-        dbOperations.open();
+        if (originalMaterial != null) {
+            String titleContentType = originalMaterial.getContentType().equals("Video") ? "Video" : "Documento";
+            getSupportActionBar().setTitle(titleContentType + getMaterialTypeActionBarTitle(originalMaterial.getMaterialType()));
+
+            String[] topics = getResources().getStringArray(R.array.partials);
+
+            Integer spinnerPosition = Arrays.asList(topics).indexOf(originalMaterial.getPartial());
+
+            etName.setText(originalMaterial.getName());
+            etTopic.setText(originalMaterial.getTopic());
+            spinnerPartial.setSelection(spinnerPosition);
+            calendarNote.setTime(getStringAsDate(originalMaterial.getDate()));
+            etDocumentUrl.setText(originalMaterial.getContent());
+
+        } else  {
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_24dp);
+            String titleContentType = contentType.equals("Video") ? "video" : "documento";
+            getSupportActionBar().setTitle("Nuevo " + titleContentType + getMaterialTypeActionBarTitle(materialType));
+
+        }
+
+        updateLabel();
 
     }
 
@@ -175,6 +192,9 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         Material material = new Material(materialType, contentType, etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), calendarNote.getTime().toString(), etDocumentUrl.getText().toString() );
 
         try {
+            dbOperations = new MaterialOperations(getApplicationContext());
+            dbOperations.open();
+
             dbOperations.addMaterial(material);
         } catch (Exception e) {
             return false;
@@ -199,6 +219,18 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat);
 
         return dateFormat.format(date);
+    }
+
+    private Date getStringAsDate(String date) {
+        String myFormat = "EEEE, MMMM dd yyyy";
+        DateFormat dateFormat = new SimpleDateFormat(myFormat);
+
+        try {
+            return dateFormat.parse(date);
+        } catch (Exception e) {
+            return new Date();
+        }
+
     }
 
     private boolean checkTextField(EditText view) {

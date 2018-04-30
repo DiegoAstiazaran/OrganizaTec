@@ -12,16 +12,19 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MaterialListFragment extends Fragment {
+public class MaterialListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     MaterialOperations dbOperations;
 
     private static final String MATERIAL_TYPE = "material_type";
     private static final String CONTENT_TYPE = "content_type";
     public static final Integer NEW_MATERIAL_FRAGMENT_KEY = 2;
+    public static final Integer EDIT_MATERIAL_FRAGMENT_KEY = 2;
     public static final String MATERIAL_OBJECT = "material_object";
 
     private String materialType;
@@ -127,6 +130,8 @@ public class MaterialListFragment extends Fragment {
 
         listViewMaterial.setAdapter(materialAdapter);
 
+        listViewMaterial.setOnItemClickListener(this);
+
         return rootView;
     }
 
@@ -150,12 +155,6 @@ public class MaterialListFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == -1 && requestCode == NEW_MATERIAL_FRAGMENT_KEY) {
             Material newMaterial = data.getExtras().getParcelable(MATERIAL_OBJECT);
@@ -163,6 +162,24 @@ public class MaterialListFragment extends Fragment {
             materials.add(newMaterial);
 
             materialAdapter.notifyDataSetChanged();
+
+        }
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Material material = materials.get(position);
+        String contentType = material.getContentType();
+        if ( contentType.equals("Document") || contentType.equals("Video")) {
+            Intent intent = new Intent(getContext(), NewDocumentVideoActivity.class);
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("material_object", material);
+
+            intent.putExtras(bundle);
+
+            startActivityForResult(intent, EDIT_MATERIAL_FRAGMENT_KEY);
 
         }
 
