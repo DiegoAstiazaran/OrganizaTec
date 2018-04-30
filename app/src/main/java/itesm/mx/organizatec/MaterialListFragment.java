@@ -160,9 +160,17 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
         if (resultCode == -1 && requestCode == NEW_MATERIAL_FRAGMENT_KEY) {
             Material newMaterial = data.getExtras().getParcelable(MATERIAL_OBJECT);
 
-            materials.add(newMaterial);
+            if (newMaterial != null) {
+                materials.add(newMaterial);
+            } else {
+                materials.clear();
+
+                materials.addAll(dbOperations.getAllMaterials(materialType, contentType));
+
+            }
 
             materialAdapter.notifyDataSetChanged();
+
 
         } else
         if (resultCode == -1 && requestCode == EDIT_MATERIAL_FRAGMENT_KEY) {
@@ -216,6 +224,15 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
 
             startActivityForResult(intent, EDIT_MATERIAL_FRAGMENT_KEY);
 
+        } else {
+            Intent intent = new Intent(getContext(), NewNoteActivity.class);
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(NewNoteActivity.MATERIAL_OBJECT, material);
+
+            intent.putExtras(bundle);
+
+            startActivityForResult(intent, EDIT_MATERIAL_FRAGMENT_KEY);
         }
 
     }

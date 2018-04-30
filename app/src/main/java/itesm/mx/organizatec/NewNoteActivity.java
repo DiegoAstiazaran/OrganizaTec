@@ -58,7 +58,7 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
         if (originalMaterial != null) {
             getSupportActionBar().setTitle("Nota" + getMaterialTypeActionBarTitle(originalMaterial.getMaterialType()));
 
-            fragment = NewNoteContentFragment.newInstance(originalMaterial);
+            material = originalMaterial;
 
         } else {
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_24dp);
@@ -66,8 +66,9 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
 
             material = new Material();
 
-            fragment = new NewNoteContentFragment();
         }
+
+        fragment = NewNoteContentFragment.newInstance(material);
 
         getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment, "NewNoteContentFragment").addToBackStack(null).commit();
 
@@ -80,36 +81,42 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
     }
 
     @SuppressLint("RestrictedApi")
-    public void continueNewNote(ArrayList<byte[]> images, String noteContent) {
-        material.setImages(images);
-        material.setContent(noteContent);
-
-        NewNoteDetailFragment fragment = new NewNoteDetailFragment();
+    public void continueNewNote(Material paramMaterial) {
+        NewNoteDetailFragment fragment = NewNoteDetailFragment.newInstance(material);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, "NewNoteDetailFragment").addToBackStack(null).commit();
 
     }
 
-    public void saveNewNote(String name, String topic, String partial, String date) {
+    public void saveNewNote(Material paramMaterial) {
 
-        material.setName(name);
-        material.setTopic(topic);
-        material.setPartial(partial);
-        material.setDate(date);
-        material.setMaterialType(materialType);
-        material.setContentType(contentType);
+        if(material.getId() == 0) {
+            material.setMaterialType(materialType);
+            material.setContentType(contentType);
 
-        dbOperations = new MaterialOperations(getApplicationContext());
-        dbOperations.open();
+            try {
+                dbOperations = new MaterialOperations(getApplicationContext());
+                dbOperations.open();
+                dbOperations.addMaterial(material);
+            } catch (Exception e) {
 
-        try {
-            dbOperations.addMaterial(material);
-        } catch (Exception e) {
+            }
+        } else {
+            try {
+                dbOperations = new MaterialOperations(getApplicationContext());
+                dbOperations.open();
+                dbOperations.updateMaterial(material);
+            } catch (Exception e) {
+
+            }
 
         }
 
         Intent intent = new Intent();
 
+        Bundle bundle = new Bundle();
+//        bundle.putParcelable(MaterialListFragment.MATERIAL_OBJECT, material);
+        intent.putExtras(bundle);
         setResult(RESULT_OK, intent);
 
         finish();

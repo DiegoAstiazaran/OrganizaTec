@@ -21,8 +21,10 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
@@ -80,9 +82,22 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
         btnAddImage = (Button) view.findViewById(R.id.btn_add_note_image);
         etNoteContent = (EditText) view.findViewById(R.id.edit_note_content);
 
+        btnAddImage.setOnClickListener(this);
+
         noteImages = new ArrayList<>();
 
-        btnAddImage.setOnClickListener(this);
+        if (material.getId() != 0) {
+            etNoteContent.setText(material.getContent());
+
+            ArrayList<byte[]> listByte = material.getImages();
+
+            for(byte[] array: listByte)
+            {
+                Bitmap bm = BitmapFactory.decodeByteArray(array, 0, array.length); //use android built-in functions
+                noteImages.add(bm);
+            }
+
+        }
 
         imageAdapter = new NoteImageAdapter(getContext(), noteImages);
 
@@ -122,15 +137,19 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
                 }
 
                 ArrayList<byte[]> images = new ArrayList<>();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
                 for(Bitmap bitmap: noteImages){
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
                     images.add(byteArray);
+
                 }
 
-                mCallBack.continueNewNote(images, noteContent);
+                material.setContent(noteContent);
+                material.setImages(images);
+
+                mCallBack.continueNewNote(material);
 
                 Toast.makeText(getContext(), "CONTINUE!", Toast.LENGTH_SHORT).show();
 
@@ -165,7 +184,7 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
     }
 
     public interface OnContinueListener {
-        public void continueNewNote (ArrayList<byte[]> images, String noteContent);
+        public void continueNewNote (Material material);
     }
 
     @Override

@@ -27,14 +27,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
 
 public class NewNoteDetailFragment extends Fragment {
+
+    public static final String MATERIAL_OBJECT = "material_object";
 
     OnSaveListener mCallBack;
 
@@ -46,13 +50,33 @@ public class NewNoteDetailFragment extends Fragment {
 
     Calendar calendarNote;
 
+    Material material;
+
     public NewNoteDetailFragment() {
         // Required empty public constructor
     }
 
+    public static NewNoteDetailFragment newInstance(Material material) {
+        NewNoteDetailFragment fragment = new NewNoteDetailFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(MATERIAL_OBJECT, material);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            material = bundle.getParcelable(MATERIAL_OBJECT);
+        }
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_note_detail, container, false);
 
@@ -91,6 +115,19 @@ public class NewNoteDetailFragment extends Fragment {
                         calendarNote.get(Calendar.YEAR), calendarNote.get(Calendar.MONTH), calendarNote.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+
+        if (material.getId() != 0) {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+            String[] topics = getResources().getStringArray(R.array.partials);
+
+            Integer spinnerPosition = Arrays.asList(topics).indexOf(material.getPartial());
+
+            etName.setText(material.getName());
+            etTopic.setText(material.getTopic());
+            spinnerPartial.setSelection(spinnerPosition);
+            calendarNote.setTime(getStringAsDate(material.getDate()));
+        }
 
         updateLabel();
 
@@ -134,8 +171,12 @@ public class NewNoteDetailFragment extends Fragment {
         if (!checkTextField(etDate))
             return false;
 
+        material.setName(etName.getText().toString());
+        material.setTopic(etTopic.getText().toString());
+        material.setPartial(spinnerPartial.getSelectedItem().toString());
+        material.setDate(etDate.getText().toString());
 
-        mCallBack.saveNewNote(etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), calendarNote.getTime().toString() );
+        mCallBack.saveNewNote(material);
 
         return true;
     }
@@ -145,6 +186,18 @@ public class NewNoteDetailFragment extends Fragment {
         SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat);
 
         return dateFormat.format(date);
+    }
+
+    private Date getStringAsDate(String date) {
+        String myFormat = "EEEE, MMMM dd yyyy";
+        DateFormat dateFormat = new SimpleDateFormat(myFormat);
+
+        try {
+            return dateFormat.parse(date);
+        } catch (Exception e) {
+            return new Date();
+        }
+
     }
 
     private boolean checkTextField(EditText view) {
@@ -159,7 +212,7 @@ public class NewNoteDetailFragment extends Fragment {
     }
 
     public interface OnSaveListener {
-        public void saveNewNote(String name, String topic, String partial, String date);
+        public void saveNewNote(Material material);
     }
 
     @Override
@@ -178,6 +231,5 @@ public class NewNoteDetailFragment extends Fragment {
             }
         }
     }
-
 
 }
