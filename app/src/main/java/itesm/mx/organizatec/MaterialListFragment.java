@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class MaterialListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
@@ -83,6 +84,36 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
         radioGroupSortOrder = (RadioGroup) rootView.findViewById(R.id.radio_group_sort_order);
         listViewMaterial = (ListView) rootView.findViewById(R.id.list_view);
 
+
+        radioGroupOrderBy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                boolean desc = radioGroupSortOrder.getCheckedRadioButtonId() == R.id.radio_button_sort_order_desc;
+
+                if (checkedId == R.id.radio_button_order_by_name) {
+                    sortByName(desc);
+                } else if (checkedId == R.id.radio_button_order_by_date) {
+                    sortByDate(desc);
+                }
+
+            }
+        });
+
+        radioGroupSortOrder.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                boolean desc = checkedId == R.id.radio_button_sort_order_desc;
+
+                if (radioGroupOrderBy.getCheckedRadioButtonId() == R.id.radio_button_order_by_name) {
+                    sortByName(desc);
+                } else if (radioGroupOrderBy.getCheckedRadioButtonId() == R.id.radio_button_order_by_date) {
+                    sortByDate(desc);
+                }
+
+            }
+        });
+
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>
                 (getContext(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.partials));
 
@@ -133,26 +164,9 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
 
         listViewMaterial.setOnItemClickListener(this);
 
+        sortList();
+
         return rootView;
-    }
-
-    public void onRadioButtonClicked(View view) {
-        boolean checked = ((RadioButton) view).isChecked();
-
-        switch(view.getId()) {
-            case R.id.radio_button_order_by_name:
-                if (checked)
-                    break;
-            case R.id.radio_button_order_by_date:
-                if (checked)
-                    break;
-            case R.id.radio_button_sort_order_desc:
-                if (checked)
-                    break;
-            case R.id.radio_button_sort_order_asc:
-                if (checked)
-                    break;
-        }
     }
 
     @Override
@@ -171,6 +185,7 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
 
             materialAdapter.notifyDataSetChanged();
 
+            sortList();
 
         } else
         if (resultCode == -1 && requestCode == EDIT_MATERIAL_FRAGMENT_KEY) {
@@ -185,6 +200,8 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
             }
 
             materialAdapter.notifyDataSetChanged();
+
+            sortList();
 
         }
 
@@ -237,5 +254,32 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
 
     }
 
+    private void sortByName (boolean desc) {
+        Collections.sort(materials, Material.nameComparator);
+
+        if (desc)
+            Collections.reverse(materials);
+
+        materialAdapter.notifyDataSetChanged();
+    }
+
+    private void sortByDate (boolean desc) {
+        Collections.sort(materials, Material.dateComparator);
+
+        if (desc)
+            Collections.reverse(materials);
+
+        materialAdapter.notifyDataSetChanged();
+    }
+
+    private void sortList() {
+        boolean desc = radioGroupSortOrder.getCheckedRadioButtonId() == R.id.radio_button_sort_order_desc;
+
+        if (radioGroupOrderBy.getCheckedRadioButtonId() == R.id.radio_button_order_by_name) {
+            sortByName(desc);
+        } else if (radioGroupOrderBy.getCheckedRadioButtonId() == R.id.radio_button_order_by_date) {
+            sortByDate(desc);
+        }
+    }
 
 }
