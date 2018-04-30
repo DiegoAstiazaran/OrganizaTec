@@ -153,7 +153,7 @@ public class MaterialOperations {
         return images;
     }
 
-    private long updateMaterial(Material material) {
+    public long updateMaterial(Material material) {
         long newRowId = 0;
         try {
             ContentValues values = new ContentValues();
@@ -192,5 +192,22 @@ public class MaterialOperations {
         }
 
     }
+
+    public void deleteMaterial(Material material) {
+        try {
+            db.delete(DataBaseSchema.MaterialTable.TABLE_NAME,
+                    "_id = " + material.getId(), null);
+
+            if(material.getContentType().equals("Note")) {
+                deleteAllNoteImages(material.getId());
+            }
+
+        } catch (SQLException e) {
+            Log.e("SQLDELETE", e.toString());
+        }
+
+    }
+
+
 
 }
