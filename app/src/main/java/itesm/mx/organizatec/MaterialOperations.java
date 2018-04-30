@@ -33,7 +33,8 @@ public class MaterialOperations {
         long newRowId = 0;
         try {
             ContentValues values = new ContentValues();
-            values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_TYPE, material.getType());
+            values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_MATERIAL_TYPE, material.getMaterialType());
+            values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT_TYPE, material.getContentType());
             values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_NAME, material.getName());
             values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_TOPIC, material.getTopic());
             values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_PARTIAL, material.getPartial());
@@ -42,7 +43,7 @@ public class MaterialOperations {
 
             newRowId = db.insert(DataBaseSchema.MaterialTable.TABLE_NAME, null, values);
 
-            if(material.getType().equals("Note")) {
+            if(material.getContentType().equals("Note")) {
                 ArrayList<byte[]> images = material.getImages();
                 for(byte[] image : images){
                     addNoteImage(image, newRowId);
@@ -73,31 +74,33 @@ public class MaterialOperations {
         return newRowId;
     }
 
-    public ArrayList<Material> getAllMaterials(String contentType) {
+    public ArrayList<Material> getAllMaterials(String materialType, String contentType) {
 
         ArrayList<Material> materials = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + DataBaseSchema.MaterialTable.TABLE_NAME +
-                            " WHERE " + DataBaseSchema.MaterialTable.COLUMN_NAME_TYPE + " = \"" + contentType + "\"";
+                            " WHERE " + DataBaseSchema.MaterialTable.COLUMN_NAME_MATERIAL_TYPE + " = \"" + materialType + "\"" +
+                            " AND " + DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT_TYPE + " = \"" + contentType + "\"";
 
         try {
             Cursor cursor = db.rawQuery(selectQuery, null);
 
             if(cursor.moveToFirst()) {
                 do {
-                    String noteType = cursor.getString(1);
+                    String noteType = cursor.getString(2);
 
                     if (noteType.equals("Note")) {
                         long noteId = Integer.parseInt(cursor.getString(0));
                         ArrayList<byte[]> images = getNoteImages(noteId);
                         Material material = new Material(
                                 noteId,
+                                cursor.getString(1),
                                 noteType,
-                                cursor.getString(2),
                                 cursor.getString(3),
                                 cursor.getString(4),
                                 cursor.getString(5),
                                 cursor.getString(6),
+                                cursor.getString(7),
                                 images
                         );
 
@@ -105,12 +108,13 @@ public class MaterialOperations {
                     } else {
                         Material material = new Material(
                                 Integer.parseInt(cursor.getString(0)),
+                                cursor.getString(1),
                                 noteType,
-                                cursor.getString(2),
                                 cursor.getString(3),
                                 cursor.getString(4),
                                 cursor.getString(5),
-                                cursor.getString(6)
+                                cursor.getString(6),
+                                cursor.getString(7)
                         );
 
                         materials.add(material);

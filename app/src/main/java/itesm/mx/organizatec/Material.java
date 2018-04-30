@@ -8,7 +8,8 @@ import java.util.ArrayList;
 public class Material implements Parcelable {
 
     private long id;
-    private String type;
+    private String materialType;
+    private String contentType;
     private String name;
     private String topic;
     private String partial;
@@ -18,9 +19,10 @@ public class Material implements Parcelable {
 
     public Material() {}
 
-    public Material(long id, String type, String name, String topic, String partial, String date, String content) {
+    public Material(long id, String materialType, String contentType, String name, String topic, String partial, String date, String content) {
         this.id = id;
-        this.type = type;
+        this.materialType = materialType;
+        this.contentType = contentType;
         this.name = name;
         this.topic = topic;
         this.partial = partial;
@@ -29,9 +31,10 @@ public class Material implements Parcelable {
         this.images = null;
     }
 
-    public Material(long id, String type, String name, String topic, String partial, String date, String content, ArrayList<byte[]> images) {
+    public Material(long id, String materialType, String contentType, String name, String topic, String partial, String date, String content, ArrayList<byte[]> images) {
         this.id = id;
-        this.type = type;
+        this.materialType = materialType;
+        this.contentType = contentType;
         this.name = name;
         this.topic = topic;
         this.partial = partial;
@@ -40,8 +43,9 @@ public class Material implements Parcelable {
         this.images = images;
     }
 
-    public Material(String type, String name, String topic, String partial, String date, String content) {
-        this.type = type;
+    public Material(String materialType, String contentType, String name, String topic, String partial, String date, String content) {
+        this.materialType = materialType;
+        this.contentType = contentType;
         this.name = name;
         this.topic = topic;
         this.partial = partial;
@@ -58,12 +62,20 @@ public class Material implements Parcelable {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public String getMaterialType() {
+        return materialType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setMaterialType(String materialType) {
+        this.materialType = materialType;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public String getName() {
@@ -123,7 +135,8 @@ public class Material implements Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(id);
-        out.writeString(type);
+        out.writeString(materialType);
+        out.writeString(contentType);
         out.writeString(name);
         out.writeString(topic);
         out.writeString(partial);
@@ -134,7 +147,8 @@ public class Material implements Parcelable {
 
     private Material(Parcel in) {
         id = in.readLong();
-        type = in.readString();
+        materialType = in.readString();
+        contentType = in.readString();
         name = in.readString();
         topic = in.readString();
         partial = in.readString();

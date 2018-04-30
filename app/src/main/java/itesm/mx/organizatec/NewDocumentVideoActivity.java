@@ -66,9 +66,9 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_24dp);
 
-        String titleContentType = contentType.equals("Video") ? "video " : "documento ";
+        String titleContentType = contentType.equals("Video") ? "video" : "documento";
 
-        getSupportActionBar().setTitle("Nuevo " + titleContentType + materialType);
+        getSupportActionBar().setTitle("Nuevo " + titleContentType + getMaterialTypeActionBarTitle(materialType));
 
         etName = (TextInputEditText) findViewById(R.id.edit_content_name);
         etTopic = (TextInputEditText) findViewById(R.id.edit_content_topic);
@@ -172,7 +172,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         if (!checkTextField(etDocumentUrl))
             return false;
 
-        Material material = new Material(contentType, etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), calendarNote.getTime().toString(), etDocumentUrl.getText().toString() );
+        Material material = new Material(materialType, contentType, etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), calendarNote.getTime().toString(), etDocumentUrl.getText().toString() );
 
         try {
             dbOperations.addMaterial(material);
@@ -210,6 +210,17 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private String getMaterialTypeActionBarTitle (String materialType) {
+        String title = "";
+        if (materialType.equals("Practice") ) {
+            title = " de práctica";
+        } else if (materialType.equals("Theory")) {
+            title = " de teoría";
+        }
+
+        return title;
     }
 
 }

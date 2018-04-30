@@ -19,10 +19,12 @@ public class MaterialListFragment extends Fragment {
 
     MaterialOperations dbOperations;
 
+    private static final String MATERIAL_TYPE = "material_type";
     private static final String CONTENT_TYPE = "content_type";
     public static final Integer NEW_MATERIAL_FRAGMENT_KEY = 2;
     public static final String MATERIAL_OBJECT = "material_object";
 
+    private String materialType;
     private String contentType;
 
     Spinner spinnerTopic;
@@ -38,11 +40,11 @@ public class MaterialListFragment extends Fragment {
     public MaterialListFragment() {
     }
 
-    public static MaterialListFragment newInstance(int sectionNumber) {
+    public static MaterialListFragment newInstance(String materialType, String contentType) {
         MaterialListFragment fragment = new MaterialListFragment();
         Bundle args = new Bundle();
-        String contentType = sectionNumber == 0 ? "Video" : sectionNumber == 1 ? "Document" : "Note";
         args.putString(CONTENT_TYPE, contentType);
+        args.putString(MATERIAL_TYPE, materialType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,13 +55,14 @@ public class MaterialListFragment extends Fragment {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
+            materialType = bundle.getString(MATERIAL_TYPE);
             contentType = bundle.getString(CONTENT_TYPE);
         }
 
         dbOperations = new MaterialOperations(getContext());
         dbOperations.open();
 
-        materials = dbOperations.getAllMaterials(contentType);
+        materials = dbOperations.getAllMaterials(materialType, contentType);
 
         materialAdapter = new MaterialAdapter(getContext(), materials);
 
@@ -160,7 +163,6 @@ public class MaterialListFragment extends Fragment {
             materials.add(newMaterial);
 
             materialAdapter.notifyDataSetChanged();
-
 
         }
 
