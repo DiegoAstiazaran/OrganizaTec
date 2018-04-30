@@ -153,4 +153,44 @@ public class MaterialOperations {
         return images;
     }
 
+    private long updateMaterial(Material material) {
+        long newRowId = 0;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_MATERIAL_TYPE, material.getMaterialType());
+            values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT_TYPE, material.getContentType());
+            values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_NAME, material.getName());
+            values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_TOPIC, material.getTopic());
+            values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_PARTIAL, material.getPartial());
+            values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_DATE, material.getDate());
+            values.put(DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT, material.getContent());
+
+            newRowId = db.update(DataBaseSchema.MaterialTable.TABLE_NAME, values, "_id = " + material.getId(), null);
+
+            if(material.getContentType().equals("Note")) {
+                deleteAllNoteImages(material.getId());
+
+                ArrayList<byte[]> images = material.getImages();
+                for(byte[] image : images){
+                    addNoteImage(image, newRowId);
+                }
+            }
+
+        } catch (SQLException e) {
+            Log.e("SQLUPDATE", e.toString());
+        }
+
+        return newRowId;
+    }
+
+    private void deleteAllNoteImages(long noteId) {
+        try {
+            db.delete(DataBaseSchema.NoteImageTable.TABLE_NAME,
+            DataBaseSchema.NoteImageTable.COLUMN_NAME_NOTE_ID + " = " + noteId, null);
+        } catch (SQLException e) {
+            Log.e("SQLDELETE", e.toString());
+        }
+
+    }
+
 }
