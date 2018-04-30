@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
@@ -40,6 +41,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
 
     public static final String MATERIAL_TYPE = "material_type";
     public static final String CONTENT_TYPE = "content_type";
+    public static final String MATERIAL_OBJECT = "material_object";
 
     MaterialOperations dbOperations;
 
@@ -118,6 +120,8 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         });
 
         if (originalMaterial != null) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
             String titleContentType = originalMaterial.getContentType().equals("Video") ? "Video" : "Documento";
             getSupportActionBar().setTitle(titleContentType + getMaterialTypeActionBarTitle(originalMaterial.getMaterialType()));
 
@@ -147,6 +151,10 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_nav_bar, menu);
+        if (originalMaterial != null) {
+            inflater.inflate(R.menu.delete_nav_bar, menu);
+        }
+
         return true;
     }
 
@@ -155,6 +163,8 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.save_menu_button:
                 return saveMaterialContent();
+            case R.id.delete_menu_button:
+                return deleteMaterialContent();
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -189,13 +199,58 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         if (!checkTextField(etDocumentUrl))
             return false;
 
-        Material material = new Material(materialType, contentType, etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), calendarNote.getTime().toString(), etDocumentUrl.getText().toString() );
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
 
+        if (originalMaterial == null) {
+            Material material = new Material(materialType, contentType, etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), etDate.getText().toString(), etDocumentUrl.getText().toString() );
+
+            try {
+                dbOperations = new MaterialOperations(getApplicationContext());
+                dbOperations.open();
+
+                dbOperations.addMaterial(material);
+            } catch (Exception e) {
+                return false;
+            }
+
+            bundle.putParcelable(MaterialListFragment.MATERIAL_OBJECT, material);
+
+        } else {
+            originalMaterial.setName(etName.getText().toString());
+            originalMaterial.setTopic(etTopic.getText().toString());
+            originalMaterial.setPartial(spinnerPartial.getSelectedItem().toString());
+            originalMaterial.setDate(etDate.getText().toString());
+            originalMaterial.setContent(etDocumentUrl.getText().toString());
+
+            try {
+                dbOperations = new MaterialOperations(getApplicationContext());
+                dbOperations.open();
+
+                dbOperations.updateMaterial(originalMaterial);
+            } catch (Exception e) {
+                return false;
+            }
+
+            bundle.putParcelable(MaterialListFragment.MATERIAL_OBJECT, originalMaterial);
+
+        }
+
+        intent.putExtras(bundle);
+
+        setResult(RESULT_OK, intent);
+
+        finish();
+
+        return true;
+    }
+
+    private boolean deleteMaterialContent() {
         try {
             dbOperations = new MaterialOperations(getApplicationContext());
             dbOperations.open();
 
-            dbOperations.addMaterial(material);
+            dbOperations.deleteMaterial(originalMaterial);
         } catch (Exception e) {
             return false;
         }
@@ -203,7 +258,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
 
-        bundle.putParcelable(MaterialListFragment.MATERIAL_OBJECT, material);
+        bundle.putLong(MaterialListFragment.DELETED_MATERIAL_OBJECT_ID, originalMaterial.getId());
 
         intent.putExtras(bundle);
 

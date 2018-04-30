@@ -18,9 +18,7 @@
     <string name="text_drawer_info_course">Curso</string>
 
     <string name="save">Save</string>
+    <string name="delete">Delete</string>
     <string name="continue_text">Continue</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
