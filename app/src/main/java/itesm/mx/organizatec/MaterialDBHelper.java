@@ -20,13 +20,16 @@ public class MaterialDBHelper extends SQLiteOpenHelper {
                 DataBaseSchema.MaterialTable.TABLE_NAME +
                 "(" +
                 DataBaseSchema.MaterialTable._ID + " INTEGER PRIMARY KEY, " +
-                DataBaseSchema.MaterialTable.COLUMN_NAME_TYPE + " TEXT, " +
+                DataBaseSchema.MaterialTable.COLUMN_NAME_MATERIAL_TYPE + " TEXT, " +
+                DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT_TYPE + " TEXT, " +
                 DataBaseSchema.MaterialTable.COLUMN_NAME_NAME + " TEXT, " +
                 DataBaseSchema.MaterialTable.COLUMN_NAME_TOPIC + " TEXT, " +
                 DataBaseSchema.MaterialTable.COLUMN_NAME_PARTIAL + " TEXT, " +
                 DataBaseSchema.MaterialTable.COLUMN_NAME_DATE + " TEXT, " +
                 DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT + " TEXT, " +
-                "CHECK (" + DataBaseSchema.MaterialTable.COLUMN_NAME_TYPE +
+                "CHECK (" + DataBaseSchema.MaterialTable.COLUMN_NAME_MATERIAL_TYPE +
+                " IN (\"Theory\", \"Practice\")), " +
+                "CHECK (" + DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT_TYPE +
                 " IN (\"Video\", \"Document\", \"Note\")), " +
                 "CHECK (" + DataBaseSchema.MaterialTable.COLUMN_NAME_PARTIAL +
                 " IN (\"Primer Parcial\", \"Segundo Parcial\", \"Tercer Parcial\", \"Final\"))" +
