@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,7 +31,7 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
 
     private static final int ADD_NOTE_IMAGE_CODE = 1;
 
-    public static final String MATERIAL_TYPE = "material_type";
+    public static final String MATERIAL_OBJECT = "material_object";
 
     private String materialType;
 
@@ -43,13 +44,33 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
     EditText etNoteContent;
     ArrayList<Bitmap> noteImages;
 
+    Material material;
+
     public NewNoteContentFragment() {
         // Required empty public constructor
     }
 
+    public static NewNoteContentFragment newInstance(Material material) {
+        NewNoteContentFragment fragment = new NewNoteContentFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(MATERIAL_OBJECT, material);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            material = bundle.getParcelable(MATERIAL_OBJECT);
+        }
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_note_content, container, false);
 
