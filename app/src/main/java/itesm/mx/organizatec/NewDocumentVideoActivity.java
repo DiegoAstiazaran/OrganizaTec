@@ -69,7 +69,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            originalMaterial = bundle.getParcelable("material_object");
+            originalMaterial = bundle.getParcelable(MATERIAL_OBJECT);
             materialType = bundle.getString(MATERIAL_TYPE);
             contentType = bundle.getString(CONTENT_TYPE);
         }
@@ -82,8 +82,6 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         spinnerPartial = (Spinner) findViewById(R.id.spinner_partial);
         etDate = (TextInputEditText) findViewById(R.id.edit_date);
         btnInternet = (ImageView) findViewById(R.id.btn_internet);
-
-        etDocumentUrl.setText("http://");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>
                 (getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.partials));
@@ -122,6 +120,18 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
                     return true;
                 }
                 return false;
+            }
+        });
+
+        etDocumentUrl.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    if(etDocumentUrl.getText().toString().trim().equals("")) {
+                        String defaultUrl = "http://";
+                        etDocumentUrl.setText(defaultUrl);
+                        etDocumentUrl.setSelection(defaultUrl.length());
+                    }
+                }
             }
         });
 
