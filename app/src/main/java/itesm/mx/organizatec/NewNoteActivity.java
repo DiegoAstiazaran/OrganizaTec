@@ -123,6 +123,36 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
 
     }
 
+    public void deleteNoteFromContent() {
+        deleteMaterial();
+    }
+    public void deleteNoteFromDetail() {
+        deleteMaterial();
+    }
+
+    public void deleteMaterial() {
+        try {
+            dbOperations = new MaterialOperations(getApplicationContext());
+            dbOperations.open();
+
+            dbOperations.deleteMaterial(originalMaterial);
+        } catch (Exception e) {
+            return;
+        }
+
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+
+        bundle.putLong(MaterialListFragment.DELETED_MATERIAL_OBJECT_ID, originalMaterial.getId());
+
+        intent.putExtras(bundle);
+
+        setResult(RESULT_OK, intent);
+
+        finish();
+
+    }
+
     @Override
     public void onBackPressed() {
 

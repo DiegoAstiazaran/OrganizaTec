@@ -139,6 +139,9 @@ public class NewNoteDetailFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.save_nav_bar, menu);
+        if (material.getId() != 0) {
+            inflater.inflate(R.menu.delete_nav_bar, menu);
+        }
     }
 
     @Override
@@ -146,6 +149,10 @@ public class NewNoteDetailFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.save_menu_button:
                 return saveMaterialContent();
+
+            case R.id.delete_menu_button:
+                mCallBack.deleteNoteFromDetail();
+                return true;
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -213,6 +220,7 @@ public class NewNoteDetailFragment extends Fragment {
 
     public interface OnSaveListener {
         public void saveNewNote(Material material);
+        public void deleteNoteFromDetail ();
     }
 
     @Override

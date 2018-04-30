@@ -123,6 +123,9 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.continue_nav_bar, menu);
+        if (material.getId() != 0) {
+            inflater.inflate(R.menu.delete_nav_bar, menu);
+        }
     }
 
     @Override
@@ -153,6 +156,9 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
 
                 Toast.makeText(getContext(), "CONTINUE!", Toast.LENGTH_SHORT).show();
 
+                return true;
+            case R.id.delete_menu_button:
+                mCallBack.deleteNoteFromContent();
                 return true;
 
             default:
@@ -185,6 +191,7 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
 
     public interface OnContinueListener {
         public void continueNewNote (Material material);
+        public void deleteNoteFromContent ();
     }
 
     @Override
