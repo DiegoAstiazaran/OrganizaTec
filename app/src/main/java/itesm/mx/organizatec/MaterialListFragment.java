@@ -12,17 +12,21 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MaterialListFragment extends Fragment {
+public class MaterialListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     MaterialOperations dbOperations;
 
     private static final String MATERIAL_TYPE = "material_type";
     private static final String CONTENT_TYPE = "content_type";
     public static final Integer NEW_MATERIAL_FRAGMENT_KEY = 2;
+    public static final Integer EDIT_MATERIAL_FRAGMENT_KEY = 3;
     public static final String MATERIAL_OBJECT = "material_object";
+    public static final String DELETED_MATERIAL_OBJECT_ID = "deleted_material_object_id";
 
     private String materialType;
     private String contentType;
@@ -127,6 +131,8 @@ public class MaterialListFragment extends Fragment {
 
         listViewMaterial.setAdapter(materialAdapter);
 
+        listViewMaterial.setOnItemClickListener(this);
+
         return rootView;
     }
 
@@ -150,20 +156,83 @@ public class MaterialListFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == -1 && requestCode == NEW_MATERIAL_FRAGMENT_KEY) {
             Material newMaterial = data.getExtras().getParcelable(MATERIAL_OBJECT);
 
-            materials.add(newMaterial);
+            if (newMaterial != null) {
+                materials.add(newMaterial);
+            } else {
+                materials.clear();
+
+                materials.addAll(dbOperations.getAllMaterials(materialType, contentType));
+
+            }
 
             materialAdapter.notifyDataSetChanged();
 
+
+        } else
+        if (resultCode == -1 && requestCode == EDIT_MATERIAL_FRAGMENT_KEY) {
+            Material newMaterial = data.getExtras().getParcelable(MATERIAL_OBJECT);
+
+            if(newMaterial != null) {
+                updateMaterials(newMaterial);
+            } else {
+                Long deletedMaterialId = data.getExtras().getLong(DELETED_MATERIAL_OBJECT_ID);
+
+                deleteMaterial(deletedMaterialId);
+            }
+
+            materialAdapter.notifyDataSetChanged();
+
+        }
+
+    }
+
+    private void updateMaterials(Material newMaterial) {
+        for(Material material: materials) {
+            if(material.getId() == newMaterial.getId()) {
+                int pos = materials.indexOf(material);
+                materials.set(pos, newMaterial);
+                return;
+            }
+        }
+    }
+
+    private void deleteMaterial(Long id) {
+        for(Material material: materials) {
+            if(material.getId() == id) {
+                int pos = materials.indexOf(material);
+                materials.remove(pos);
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Material material = materials.get(position);
+        String contentType = material.getContentType();
+        if ( contentType.equals("Document") || contentType.equals("Video")) {
+            Intent intent = new Intent(getContext(), NewDocumentVideoActivity.class);
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(NewDocumentVideoActivity.MATERIAL_OBJECT, material);
+
+            intent.putExtras(bundle);
+
+            startActivityForResult(intent, EDIT_MATERIAL_FRAGMENT_KEY);
+
+        } else {
+            Intent intent = new Intent(getContext(), NewNoteActivity.class);
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(NewNoteActivity.MATERIAL_OBJECT, material);
+
+            intent.putExtras(bundle);
+
+            startActivityForResult(intent, EDIT_MATERIAL_FRAGMENT_KEY);
         }
 
     }

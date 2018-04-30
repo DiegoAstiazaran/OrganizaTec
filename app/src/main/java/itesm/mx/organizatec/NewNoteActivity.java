@@ -27,12 +27,14 @@ import java.util.ArrayList;
 
 public class NewNoteActivity extends AppCompatActivity implements NewNoteContentFragment.OnContinueListener, NewNoteDetailFragment.OnSaveListener{
 
+    public static final String MATERIAL_OBJECT = "material_object";
     public static final String MATERIAL_TYPE = "material_type";
     public static final String CONTENT_TYPE = "content_type";
 
     private String materialType;
     private String contentType;
 
+    Material originalMaterial;
     Material material;
 
     MaterialOperations dbOperations;
@@ -44,18 +46,29 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
+            originalMaterial = bundle.getParcelable(MATERIAL_OBJECT);
             materialType = bundle.getString(MATERIAL_TYPE);
             contentType = bundle.getString(CONTENT_TYPE);
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_24dp);
 
-        material = new Material();
+        NewNoteContentFragment fragment;
 
-        getSupportActionBar().setTitle("Nueva nota" + getMaterialTypeActionBarTitle(materialType));
+        if (originalMaterial != null) {
+            getSupportActionBar().setTitle("Nota" + getMaterialTypeActionBarTitle(originalMaterial.getMaterialType()));
 
-        NewNoteContentFragment fragment = new NewNoteContentFragment();
+            material = originalMaterial;
+
+        } else {
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_24dp);
+            getSupportActionBar().setTitle("Nueva nota" + getMaterialTypeActionBarTitle(materialType));
+
+            material = new Material();
+
+        }
+
+        fragment = NewNoteContentFragment.newInstance(material);
 
         getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment, "NewNoteContentFragment").addToBackStack(null).commit();
 
@@ -68,38 +81,69 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
     }
 
     @SuppressLint("RestrictedApi")
-    public void continueNewNote(ArrayList<byte[]> images, String noteContent) {
-        material.setImages(images);
-        material.setContent(noteContent);
-
-        NewNoteDetailFragment fragment = new NewNoteDetailFragment();
+    public void continueNewNote(Material paramMaterial) {
+        NewNoteDetailFragment fragment = NewNoteDetailFragment.newInstance(material);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, "NewNoteDetailFragment").addToBackStack(null).commit();
 
     }
 
-    public void saveNewNote(String name, String topic, String partial, String date) {
+    public void saveNewNote(Material paramMaterial) {
 
-        material.setName(name);
-        material.setTopic(topic);
-        material.setPartial(partial);
-        material.setDate(date);
-        material.setMaterialType(materialType);
-        material.setContentType(contentType);
+        if(material.getId() == 0) {
+            material.setMaterialType(materialType);
+            material.setContentType(contentType);
 
-        dbOperations = new MaterialOperations(getApplicationContext());
-        dbOperations.open();
+            try {
+                dbOperations = new MaterialOperations(getApplicationContext());
+                dbOperations.open();
+                dbOperations.addMaterial(material);
+            } catch (Exception e) {
 
+            }
+        } else {
+            try {
+                dbOperations = new MaterialOperations(getApplicationContext());
+                dbOperations.open();
+                dbOperations.updateMaterial(material);
+            } catch (Exception e) {
+
+            }
+
+        }
+
+        Intent intent = new Intent();
+
+        Bundle bundle = new Bundle();
+//        bundle.putParcelable(MaterialListFragment.MATERIAL_OBJECT, material);
+        intent.putExtras(bundle);
+        setResult(RESULT_OK, intent);
+
+        finish();
+
+    }
+
+    public void deleteNoteFromContent() {
+        deleteMaterial();
+    }
+    public void deleteNoteFromDetail() {
+        deleteMaterial();
+    }
+
+    public void deleteMaterial() {
         try {
-            dbOperations.addMaterial(material);
-        } catch (Exception e) {
+            dbOperations = new MaterialOperations(getApplicationContext());
+            dbOperations.open();
 
+            dbOperations.deleteMaterial(originalMaterial);
+        } catch (Exception e) {
+            return;
         }
 
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
 
-        bundle.putParcelable(MaterialListFragment.MATERIAL_OBJECT, material);
+        bundle.putLong(MaterialListFragment.DELETED_MATERIAL_OBJECT_ID, originalMaterial.getId());
 
         intent.putExtras(bundle);
 

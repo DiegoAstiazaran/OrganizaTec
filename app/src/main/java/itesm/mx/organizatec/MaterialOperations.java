@@ -61,7 +61,6 @@ public class MaterialOperations {
         long newRowId = 0;
         try {
             ContentValues values = new ContentValues();
-            values.put(DataBaseSchema.NoteImageTable._ID, image);
             values.put(DataBaseSchema.NoteImageTable.COLUMN_NAME_NOTE_ID, noteId);
             values.put(DataBaseSchema.NoteImageTable.COLUMN_NAME_IMAGE, image);
 

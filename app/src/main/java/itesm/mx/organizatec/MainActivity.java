@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity
             materialType = "Practice";
         }
 
-        if (navDrawerElementId == R.id.nav_doc_practice) {
+        if (navDrawerElementId == R.id.nav_doc_theory) {
             materialType = "Theory";
         }
 
