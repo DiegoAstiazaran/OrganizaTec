@@ -56,6 +56,8 @@ public class MaterialPagerFragment extends Fragment {
 
         mViewPager.setCurrentItem(1);
 
+
+
         fabAdd = (FloatingActionButton)view.findViewById(R.id.fab_add_material);
 
         fabAdd.setOnClickListener(new View.OnClickListener() {
@@ -69,17 +71,21 @@ public class MaterialPagerFragment extends Fragment {
 
                 if(itemId == 2) {
                     Intent intent = new Intent(getContext(), NewNoteActivity.class);
+
                     Bundle bundle = new Bundle();
-                    bundle.putString(NewDocumentVideoActivity.MATERIAL_TYPE, materialType);
+
+                    bundle.putString(NewNoteActivity.MATERIAL_TYPE, materialType);
+                    bundle.putString(NewNoteActivity.CONTENT_TYPE, getContentType(itemId));
                     intent.putExtras(bundle);
 
                     fragment.startActivityForResult(intent, MaterialListFragment.NEW_MATERIAL_FRAGMENT_KEY);
                 } else {
-                    String contentType = itemId == 0 ? "Video" : "Document";
                     Intent intent = new Intent(getContext(), NewDocumentVideoActivity.class);
+
                     Bundle bundle = new Bundle();
+
                     bundle.putString(NewDocumentVideoActivity.MATERIAL_TYPE, materialType);
-                    bundle.putString(NewDocumentVideoActivity.CONTENT_TYPE, contentType);
+                    bundle.putString(NewDocumentVideoActivity.CONTENT_TYPE, getContentType(itemId));
                     intent.putExtras(bundle);
 
                     fragment.startActivityForResult(intent, MaterialListFragment.NEW_MATERIAL_FRAGMENT_KEY);
@@ -100,7 +106,7 @@ public class MaterialPagerFragment extends Fragment {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a MaterialListFragment
-            return MaterialListFragment.newInstance(position);
+            return MaterialListFragment.newInstance(materialType, getContentType(position));
         }
 
         @Override
@@ -110,9 +116,10 @@ public class MaterialPagerFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    private String getContentType (int position) {
+        String contentType = position == 0 ? "Video" : position == 1 ? "Document" : "Note";
 
+        return contentType;
     }
 
 }

@@ -41,8 +41,7 @@ public class MainActivity extends AppCompatActivity
 
         MaterialPagerFragment fragment = new MaterialPagerFragment();
         Bundle bundle = new Bundle();
-        String materialType = getSupportActionBar().getTitle().toString().replace("Material ", "");
-        bundle.putString(MaterialPagerFragment.MATERIAL_TYPE, materialType);
+        bundle.putString(MaterialPagerFragment.MATERIAL_TYPE, getMaterialType(R.id.nav_doc_practice));
 
         fragment.setArguments(bundle);
 
@@ -62,28 +61,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -92,8 +69,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_doc_practice || id == R.id.nav_doc_theory) {
             MaterialPagerFragment fragment = new MaterialPagerFragment();
             Bundle bundle = new Bundle();
-            String materialType = item.getTitle().toString().replace("Material ", "");
-            bundle.putString(MaterialPagerFragment.MATERIAL_TYPE, materialType);
+            bundle.putString(MaterialPagerFragment.MATERIAL_TYPE, getMaterialType(id));
             fragment.setArguments(bundle);
 
             getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -112,5 +88,19 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private String getMaterialType (Integer navDrawerElementId) {
+        String materialType = "";
+
+        if (navDrawerElementId == R.id.nav_doc_practice) {
+            materialType = "Practice";
+        }
+
+        if (navDrawerElementId == R.id.nav_doc_practice) {
+            materialType = "Theory";
+        }
+
+        return materialType;
     }
 }

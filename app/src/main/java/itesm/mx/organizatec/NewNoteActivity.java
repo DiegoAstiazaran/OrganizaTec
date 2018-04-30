@@ -1,6 +1,7 @@
 package itesm.mx.organizatec;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -26,8 +28,10 @@ import java.util.ArrayList;
 public class NewNoteActivity extends AppCompatActivity implements NewNoteContentFragment.OnContinueListener, NewNoteDetailFragment.OnSaveListener{
 
     public static final String MATERIAL_TYPE = "material_type";
+    public static final String CONTENT_TYPE = "content_type";
 
     private String materialType;
+    private String contentType;
 
     Material material;
 
@@ -41,6 +45,7 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             materialType = bundle.getString(MATERIAL_TYPE);
+            contentType = bundle.getString(CONTENT_TYPE);
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -48,7 +53,7 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
 
         material = new Material();
 
-        getSupportActionBar().setTitle("Nueva nota " + materialType);
+        getSupportActionBar().setTitle("Nueva nota" + getMaterialTypeActionBarTitle(materialType));
 
         NewNoteContentFragment fragment = new NewNoteContentFragment();
 
@@ -79,7 +84,8 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
         material.setTopic(topic);
         material.setPartial(partial);
         material.setDate(date);
-        material.setType("Note");
+        material.setMaterialType(materialType);
+        material.setContentType(contentType);
 
         dbOperations = new MaterialOperations(getApplicationContext());
         dbOperations.open();
@@ -120,5 +126,15 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
 
     }
 
+    private String getMaterialTypeActionBarTitle (String materialType) {
+        String title = "";
+        if (materialType.equals("Practice") ) {
+            title = " de práctica";
+        } else if (materialType.equals("Theory")) {
+            title = " de teoría";
+        }
+
+        return title;
+    }
 
 }
