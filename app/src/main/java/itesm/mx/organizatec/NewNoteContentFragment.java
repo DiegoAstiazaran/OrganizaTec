@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,8 +21,10 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
@@ -30,7 +33,7 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
 
     private static final int ADD_NOTE_IMAGE_CODE = 1;
 
-    public static final String MATERIAL_TYPE = "material_type";
+    public static final String MATERIAL_OBJECT = "material_object";
 
     private String materialType;
 
@@ -43,13 +46,33 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
     EditText etNoteContent;
     ArrayList<Bitmap> noteImages;
 
+    Material material;
+
     public NewNoteContentFragment() {
         // Required empty public constructor
     }
 
+    public static NewNoteContentFragment newInstance(Material material) {
+        NewNoteContentFragment fragment = new NewNoteContentFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(MATERIAL_OBJECT, material);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            material = bundle.getParcelable(MATERIAL_OBJECT);
+        }
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_note_content, container, false);
 
@@ -59,9 +82,22 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
         btnAddImage = (Button) view.findViewById(R.id.btn_add_note_image);
         etNoteContent = (EditText) view.findViewById(R.id.edit_note_content);
 
+        btnAddImage.setOnClickListener(this);
+
         noteImages = new ArrayList<>();
 
-        btnAddImage.setOnClickListener(this);
+        if (material.getId() != 0) {
+            etNoteContent.setText(material.getContent());
+
+            ArrayList<byte[]> listByte = material.getImages();
+
+            for(byte[] array: listByte)
+            {
+                Bitmap bm = BitmapFactory.decodeByteArray(array, 0, array.length); //use android built-in functions
+                noteImages.add(bm);
+            }
+
+        }
 
         imageAdapter = new NoteImageAdapter(getContext(), noteImages);
 
@@ -87,6 +123,9 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.continue_nav_bar, menu);
+        if (material.getId() != 0) {
+            inflater.inflate(R.menu.delete_nav_bar, menu);
+        }
     }
 
     @Override
@@ -101,18 +140,25 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
                 }
 
                 ArrayList<byte[]> images = new ArrayList<>();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
                 for(Bitmap bitmap: noteImages){
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
                     images.add(byteArray);
+
                 }
 
-                mCallBack.continueNewNote(images, noteContent);
+                material.setContent(noteContent);
+                material.setImages(images);
+
+                mCallBack.continueNewNote(material);
 
                 Toast.makeText(getContext(), "CONTINUE!", Toast.LENGTH_SHORT).show();
 
+                return true;
+            case R.id.delete_menu_button:
+                mCallBack.deleteNoteFromContent();
                 return true;
 
             default:
@@ -144,7 +190,8 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
     }
 
     public interface OnContinueListener {
-        public void continueNewNote (ArrayList<byte[]> images, String noteContent);
+        public void continueNewNote (Material material);
+        public void deleteNoteFromContent ();
     }
 
     @Override
