@@ -25,7 +25,6 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
     private static final String CONTENT_TYPE = "content_type";
     public static final Integer NEW_MATERIAL_FRAGMENT_KEY = 2;
     public static final Integer EDIT_MATERIAL_FRAGMENT_KEY = 3;
-    public static final Integer DELETE_MATERIAL_FRAGMENT_KEY = 4;
     public static final String MATERIAL_OBJECT = "material_object";
     public static final String DELETED_MATERIAL_OBJECT_ID = "deleted_material_object_id";
 
@@ -169,15 +168,13 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
         if (resultCode == -1 && requestCode == EDIT_MATERIAL_FRAGMENT_KEY) {
             Material newMaterial = data.getExtras().getParcelable(MATERIAL_OBJECT);
 
-            updateMaterials(newMaterial);
+            if(newMaterial != null) {
+                updateMaterials(newMaterial);
+            } else {
+                Long deletedMaterialId = data.getExtras().getLong(DELETED_MATERIAL_OBJECT_ID);
 
-            materialAdapter.notifyDataSetChanged();
-
-        } else
-        if (resultCode == -1 && requestCode == DELETE_MATERIAL_FRAGMENT_KEY) {
-            Long deletedMaterialId = data.getExtras().getLong(DELETED_MATERIAL_OBJECT_ID);
-
-            deleteMaterial(deletedMaterialId);
+                deleteMaterial(deletedMaterialId);
+            }
 
             materialAdapter.notifyDataSetChanged();
 
@@ -217,7 +214,7 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
 
             intent.putExtras(bundle);
 
-            startActivityForResult(intent, DELETE_MATERIAL_FRAGMENT_KEY);
+            startActivityForResult(intent, EDIT_MATERIAL_FRAGMENT_KEY);
 
         }
 
