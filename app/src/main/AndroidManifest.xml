@@ -27,7 +27,6 @@
         <activity
             android:name=".NewDocumentVideoActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
-        <activity android:name=".DetailDocumentVideoActivity"></activity>
     </application>
 
 </manifest>
