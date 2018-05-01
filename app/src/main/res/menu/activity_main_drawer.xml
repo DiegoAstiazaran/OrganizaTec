@@ -20,10 +20,6 @@
                 android:id="@+id/nav_info_teacher"
                 android:icon="@drawable/ic_person_black"
                 android:title="@string/text_drawer_info_teacher" />
-            <item
-                android:id="@+id/nav_info_course"
-                android:icon="@drawable/ic_school_black"
-                android:title="@string/text_drawer_info_course" />
         </menu>
     </item>
 
