@@ -1,29 +1,10 @@
 package itesm.mx.organizatec;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class NewNoteActivity extends AppCompatActivity implements NewNoteContentFragment.OnContinueListener, NewNoteDetailFragment.OnSaveListener{
 
@@ -112,12 +93,7 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
 
         }
 
-        Intent intent = new Intent();
-
-        Bundle bundle = new Bundle();
-//        bundle.putParcelable(MaterialListFragment.MATERIAL_OBJECT, material);
-        intent.putExtras(bundle);
-        setResult(RESULT_OK, intent);
+        setResult(RESULT_OK, new Intent());
 
         finish();
 
@@ -140,14 +116,7 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
             return;
         }
 
-        Intent intent = new Intent();
-        Bundle bundle = new Bundle();
-
-        bundle.putLong(MaterialListFragment.DELETED_MATERIAL_OBJECT_ID, originalMaterial.getId());
-
-        intent.putExtras(bundle);
-
-        setResult(RESULT_OK, intent);
+        setResult(RESULT_OK, new Intent());
 
         finish();
 

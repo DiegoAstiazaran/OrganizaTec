@@ -130,6 +130,73 @@ public class MaterialOperations {
 
     }
 
+    public ArrayList<Material> getQueriedMaterials(String materialType, String contentType, String topic, String partial) {
+
+        ArrayList<Material> materials = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + DataBaseSchema.MaterialTable.TABLE_NAME +
+                " WHERE " + DataBaseSchema.MaterialTable.COLUMN_NAME_MATERIAL_TYPE + " = \"" + materialType + "\"" +
+                " AND " + DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT_TYPE + " = \"" + contentType + "\"";
+
+        if (!topic.equals("Todos los temas")) {
+            selectQuery +=
+                    " AND " + DataBaseSchema.MaterialTable.COLUMN_NAME_TOPIC + " = \"" + topic+ "\"";
+        }
+
+        if (!partial.equals("Todos los parciales")) {
+            selectQuery +=
+                    " AND " + DataBaseSchema.MaterialTable.COLUMN_NAME_PARTIAL + " = \"" + partial+ "\"";
+        }
+
+        try {
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            if(cursor.moveToFirst()) {
+                do {
+                    String noteType = cursor.getString(2);
+
+                    if (noteType.equals("Note")) {
+                        long noteId = Integer.parseInt(cursor.getString(0));
+                        ArrayList<byte[]> images = getNoteImages(noteId);
+                        Material material = new Material(
+                                noteId,
+                                cursor.getString(1),
+                                noteType,
+                                cursor.getString(3),
+                                cursor.getString(4),
+                                cursor.getString(5),
+                                cursor.getString(6),
+                                cursor.getString(7),
+                                images
+                        );
+
+                        materials.add(material);
+                    } else {
+                        Material material = new Material(
+                                Integer.parseInt(cursor.getString(0)),
+                                cursor.getString(1),
+                                noteType,
+                                cursor.getString(3),
+                                cursor.getString(4),
+                                cursor.getString(5),
+                                cursor.getString(6),
+                                cursor.getString(7)
+                        );
+
+                        materials.add(material);
+                    }
+
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } catch (SQLException e) {
+            Log.e("SQLGetQueried", e.toString());
+        }
+
+        return materials;
+
+    }
+
     private ArrayList<byte[]> getNoteImages(long noteId) {
         ArrayList<byte[]> images = new ArrayList<>();
 
@@ -204,6 +271,34 @@ public class MaterialOperations {
         } catch (SQLException e) {
             Log.e("SQLDELETE", e.toString());
         }
+
+    }
+
+    public ArrayList<String> getTopics(String materialType, String contentType) {
+
+        ArrayList<String> topics = new ArrayList<>();
+
+        String selectQuery = "SELECT " + DataBaseSchema.MaterialTable.COLUMN_NAME_TOPIC + " FROM " + DataBaseSchema.MaterialTable.TABLE_NAME +
+                " WHERE " + DataBaseSchema.MaterialTable.COLUMN_NAME_MATERIAL_TYPE + " = \"" + materialType + "\"" +
+                " AND " + DataBaseSchema.MaterialTable.COLUMN_NAME_CONTENT_TYPE + " = \"" + contentType + "\"";
+
+        try {
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            if(cursor.moveToFirst()) {
+                do {
+                        String topic = cursor.getString(0);
+
+                        topics.add(topic);
+
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } catch (SQLException e) {
+            Log.e("SQLGetTopics", e.toString());
+        }
+
+        return topics;
 
     }
 
