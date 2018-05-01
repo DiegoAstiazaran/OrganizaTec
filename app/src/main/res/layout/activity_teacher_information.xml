@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/activity_margin"
+    android:orientation="vertical"
+    tools:context=".TeacherInformationActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/teacher_name"
+        android:textSize="26sp"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".5"
+        android:text="@string/teacher_office"
+        android:textSize="20sp"
+        android:gravity="center"/>
+
+    <ImageView
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="3"
+        android:src="@drawable/teacher"/>
+
+   <TextView
+       android:id="@+id/teacher_email"
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       android:layout_weight=".5"
+       android:text="@string/teacher_email"
+       android:textColor="@color/colorHyperlink"
+       android:textSize="20sp"
+       android:gravity="center"/>
+
+
+
+</LinearLayout>

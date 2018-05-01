@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,8 +56,6 @@ public class MaterialPagerFragment extends Fragment {
 
         mViewPager.setCurrentItem(1);
 
-
-
         fabAdd = (FloatingActionButton)view.findViewById(R.id.fab_add_material);
 
         fabAdd.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +90,12 @@ public class MaterialPagerFragment extends Fragment {
                 }
             }
         });
+
+        String title = "Material de ";
+
+        String materialTypeForTitle = materialType.equals("Practice") ? "práctica" : "teoría";
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title + materialTypeForTitle);
 
         return view;
     }

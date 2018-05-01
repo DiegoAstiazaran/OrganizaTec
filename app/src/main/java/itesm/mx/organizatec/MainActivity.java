@@ -1,5 +1,6 @@
 package itesm.mx.organizatec;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
@@ -76,14 +77,12 @@ public class MainActivity extends AppCompatActivity
 
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
 
+            item.setChecked(true);
+
         } else if (id == R.id.nav_info_teacher) {
-
-        } else if (id == R.id.nav_info_course) {
-
+            Intent intent = new Intent(this, TeacherInformationActivity.class);
+            startActivity(intent);
         }
-
-        item.setChecked(true);
-        getSupportActionBar().setTitle(item.getTitle());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
