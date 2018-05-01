@@ -259,13 +259,13 @@ public class MaterialOperations {
 
     }
 
-    public void deleteMaterial(Material material) {
+    public void deleteMaterial(Long materialId, String contentType) {
         try {
             db.delete(DataBaseSchema.MaterialTable.TABLE_NAME,
-                    "_id = " + material.getId(), null);
+                    "_id = " + materialId, null);
 
-            if(material.getContentType().equals("Note")) {
-                deleteAllNoteImages(material.getId());
+            if(contentType.equals("Note")) {
+                deleteAllNoteImages(materialId);
             }
 
         } catch (SQLException e) {
@@ -302,6 +302,58 @@ public class MaterialOperations {
 
     }
 
+    public Material getMaterial(Long materialId) {
+
+        Material material = new Material();
+
+        String selectQuery = "SELECT * FROM " + DataBaseSchema.MaterialTable.TABLE_NAME +
+                " WHERE " + " _id = " + materialId;
+
+        try {
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            if(cursor.moveToFirst()) {
+                do {
+                    String noteType = cursor.getString(2);
+
+                    if (noteType.equals("Note")) {
+                        long noteId = Integer.parseInt(cursor.getString(0));
+                        ArrayList<byte[]> images = getNoteImages(noteId);
+                        material = new Material(
+                                noteId,
+                                cursor.getString(1),
+                                noteType,
+                                cursor.getString(3),
+                                cursor.getString(4),
+                                cursor.getString(5),
+                                cursor.getString(6),
+                                cursor.getString(7),
+                                images
+                        );
+
+                    } else {
+                        material = new Material(
+                                Integer.parseInt(cursor.getString(0)),
+                                cursor.getString(1),
+                                noteType,
+                                cursor.getString(3),
+                                cursor.getString(4),
+                                cursor.getString(5),
+                                cursor.getString(6),
+                                cursor.getString(7)
+                        );
+
+                    }
+
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } catch (SQLException e) {
+            Log.e("SQLList", e.toString());
+        }
+
+        return material;
+    }
 
 
 }

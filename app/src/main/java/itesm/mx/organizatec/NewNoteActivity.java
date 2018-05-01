@@ -8,14 +8,13 @@ import android.os.Bundle;
 
 public class NewNoteActivity extends AppCompatActivity implements NewNoteContentFragment.OnContinueListener, NewNoteDetailFragment.OnSaveListener{
 
-    public static final String MATERIAL_OBJECT = "material_object";
+    public static final String MATERIAL_OBJECT_ID = "material_object_id";
     public static final String MATERIAL_TYPE = "material_type";
     public static final String CONTENT_TYPE = "content_type";
 
     private String materialType;
     private String contentType;
 
-    Material originalMaterial;
     Material material;
 
     MaterialOperations dbOperations;
@@ -25,9 +24,17 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_note);
 
+        dbOperations = new MaterialOperations(getApplicationContext());
+        dbOperations.open();
+
+        material = new Material();
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            originalMaterial = bundle.getParcelable(MATERIAL_OBJECT);
+            Long id  = bundle.getLong(MATERIAL_OBJECT_ID);
+
+            material = dbOperations.getMaterial(id);
+
             materialType = bundle.getString(MATERIAL_TYPE);
             contentType = bundle.getString(CONTENT_TYPE);
         }
@@ -36,16 +43,12 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
 
         NewNoteContentFragment fragment;
 
-        if (originalMaterial != null) {
-            getSupportActionBar().setTitle("Nota" + getMaterialTypeActionBarTitle(originalMaterial.getMaterialType()));
-
-            material = originalMaterial;
+        if (material.getId() != 0) {
+            getSupportActionBar().setTitle("Nota" + getMaterialTypeActionBarTitle(material.getMaterialType()));
 
         } else {
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_24dp);
             getSupportActionBar().setTitle("Nueva nota" + getMaterialTypeActionBarTitle(materialType));
-
-            material = new Material();
 
         }
 
@@ -76,16 +79,12 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
             material.setContentType(contentType);
 
             try {
-                dbOperations = new MaterialOperations(getApplicationContext());
-                dbOperations.open();
                 dbOperations.addMaterial(material);
             } catch (Exception e) {
 
             }
         } else {
             try {
-                dbOperations = new MaterialOperations(getApplicationContext());
-                dbOperations.open();
                 dbOperations.updateMaterial(material);
             } catch (Exception e) {
 
@@ -108,10 +107,7 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
 
     public void deleteMaterial() {
         try {
-            dbOperations = new MaterialOperations(getApplicationContext());
-            dbOperations.open();
-
-            dbOperations.deleteMaterial(originalMaterial);
+            dbOperations.deleteMaterial(material.getId(), material.getContentType());
         } catch (Exception e) {
             return;
         }

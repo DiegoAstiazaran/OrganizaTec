@@ -251,7 +251,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
             dbOperations = new MaterialOperations(getApplicationContext());
             dbOperations.open();
 
-            dbOperations.deleteMaterial(originalMaterial);
+            dbOperations.deleteMaterial(originalMaterial.getId(), originalMaterial.getContentType());
         } catch (Exception e) {
             return false;
         }
