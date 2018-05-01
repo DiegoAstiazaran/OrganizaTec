@@ -3,13 +3,9 @@ package itesm.mx.organizatec;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,24 +13,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-
-import static android.app.Activity.RESULT_OK;
 
 public class NewNoteDetailFragment extends Fragment {
 
@@ -87,7 +75,7 @@ public class NewNoteDetailFragment extends Fragment {
         spinnerPartial = (Spinner) view.findViewById(R.id.spinner_partial);
         etDate = (TextInputEditText) view.findViewById(R.id.edit_date);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+        ArrayAdapter<String> adapter = new ArrayAdapter<>
                 (getContext(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.partials));
 
         spinnerPartial.setAdapter(adapter);

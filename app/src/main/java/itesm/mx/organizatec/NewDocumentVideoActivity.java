@@ -2,14 +2,10 @@ package itesm.mx.organizatec;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,27 +13,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class NewDocumentVideoActivity extends AppCompatActivity {
 
@@ -83,7 +70,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         etDate = (TextInputEditText) findViewById(R.id.edit_date);
         btnInternet = (ImageView) findViewById(R.id.btn_internet);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+        ArrayAdapter<String> adapter = new ArrayAdapter<>
                 (getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.partials));
 
         spinnerPartial.setAdapter(adapter);
@@ -222,9 +209,6 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
         if (!checkTextField(etDocumentUrl))
             return false;
 
-        Intent intent = new Intent();
-        Bundle bundle = new Bundle();
-
         if (originalMaterial == null) {
             Material material = new Material(materialType, contentType, etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), etDate.getText().toString(), etDocumentUrl.getText().toString().replace(" ",""));
 
@@ -236,8 +220,6 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
             } catch (Exception e) {
                 return false;
             }
-
-            bundle.putParcelable(MaterialListFragment.MATERIAL_OBJECT, material);
 
         } else {
             originalMaterial.setName(etName.getText().toString());
@@ -255,13 +237,9 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
                 return false;
             }
 
-            bundle.putParcelable(MaterialListFragment.MATERIAL_OBJECT, originalMaterial);
-
         }
 
-        intent.putExtras(bundle);
-
-        setResult(RESULT_OK, intent);
+        setResult(RESULT_OK, new Intent());
 
         finish();
 
@@ -278,14 +256,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
             return false;
         }
 
-        Intent intent = new Intent();
-        Bundle bundle = new Bundle();
-
-        bundle.putLong(MaterialListFragment.DELETED_MATERIAL_OBJECT_ID, originalMaterial.getId());
-
-        intent.putExtras(bundle);
-
-        setResult(RESULT_OK, intent);
+        setResult(RESULT_OK, new Intent());
 
         finish();
 
