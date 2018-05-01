@@ -141,6 +141,9 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
+
+                    Bitmap bm = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length); //use android built-in functions
+
                     images.add(byteArray);
 
                 }

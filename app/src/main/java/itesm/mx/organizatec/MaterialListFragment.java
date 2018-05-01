@@ -226,7 +226,7 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
             Intent intent = new Intent(getContext(), NewNoteActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable(NewNoteActivity.MATERIAL_OBJECT, material);
+            bundle.putLong(NewNoteActivity.MATERIAL_OBJECT_ID, material.getId());
 
             intent.putExtras(bundle);
 
