@@ -3,7 +3,11 @@ package itesm.mx.organizatec;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 
 public class Material implements Parcelable {
 
@@ -125,6 +129,40 @@ public class Material implements Parcelable {
     public void setImages(ArrayList<byte[]> images) {
         this.images = images;
     }
+
+
+    public static Comparator<Material> nameComparator = new Comparator<Material>() {
+
+        public int compare(Material m1, Material m2) {
+            String name1 = m1.getName().toUpperCase();
+            String name2 = m2.getName().toUpperCase();
+
+            return name1.compareTo(name2);
+
+        }};
+
+    public static Comparator<Material> dateComparator = new Comparator<Material>() {
+
+        public int compare(Material s1, Material s2) {
+            String myFormat = "EEEE, MMMM dd yyyy";
+            DateFormat dateFormat = new SimpleDateFormat(myFormat);
+
+            Date date1 = new Date();
+            Date date2 = new Date();
+
+            try {
+                date1 = dateFormat.parse(s1.getDate());
+                date2 = dateFormat.parse(s2.getDate());
+            } catch (Exception e) {
+
+            }
+
+            int res = date1.compareTo(date2);
+
+            return  res;
+
+        }
+    };
 
 
     @Override

@@ -16,7 +16,7 @@ public class MaterialDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String CREATE_MATERIAL_TABLE = "CREATE TABLE IF NOT EXISTS " +
+        String CREATE_MATERIAL_TABLE = "CREATE TABLE " +
                 DataBaseSchema.MaterialTable.TABLE_NAME +
                 "(" +
                 DataBaseSchema.MaterialTable._ID + " INTEGER PRIMARY KEY, " +
@@ -37,8 +37,8 @@ public class MaterialDBHelper extends SQLiteOpenHelper {
 
         db.execSQL(CREATE_MATERIAL_TABLE);
 
-        String CREATE_NOTEIMAGE_TABLE = "CREATE TABLE IF NOT EXISTS " +
-                DataBaseSchema.MaterialTable.TABLE_NAME +
+        String CREATE_NOTEIMAGE_TABLE = "CREATE TABLE " +
+                DataBaseSchema.NoteImageTable.TABLE_NAME +
                 "(" +
                 DataBaseSchema.NoteImageTable._ID + " INTEGER PRIMARY KEY, " +
                 DataBaseSchema.NoteImageTable.COLUMN_NAME_NOTE_ID + " INTEGER, " +

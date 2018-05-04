@@ -3,37 +3,30 @@ package itesm.mx.organizatec;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
-import static android.app.Activity.RESULT_OK;
-
 public class NewNoteDetailFragment extends Fragment {
+
+    public static final String MATERIAL_OBJECT = "material_object";
 
     OnSaveListener mCallBack;
 
@@ -45,13 +38,33 @@ public class NewNoteDetailFragment extends Fragment {
 
     Calendar calendarNote;
 
+    Material material;
+
     public NewNoteDetailFragment() {
         // Required empty public constructor
     }
 
+    public static NewNoteDetailFragment newInstance(Material material) {
+        NewNoteDetailFragment fragment = new NewNoteDetailFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(MATERIAL_OBJECT, material);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            material = bundle.getParcelable(MATERIAL_OBJECT);
+        }
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_note_detail, container, false);
 
@@ -62,7 +75,7 @@ public class NewNoteDetailFragment extends Fragment {
         spinnerPartial = (Spinner) view.findViewById(R.id.spinner_partial);
         etDate = (TextInputEditText) view.findViewById(R.id.edit_date);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+        ArrayAdapter<String> adapter = new ArrayAdapter<>
                 (getContext(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.partials));
 
         spinnerPartial.setAdapter(adapter);
@@ -91,7 +104,22 @@ public class NewNoteDetailFragment extends Fragment {
             }
         });
 
+        if (material.getId() != 0) {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+            String[] topics = getResources().getStringArray(R.array.partials);
+
+            Integer spinnerPosition = Arrays.asList(topics).indexOf(material.getPartial());
+
+            etName.setText(material.getName());
+            etTopic.setText(material.getTopic());
+            spinnerPartial.setSelection(spinnerPosition);
+            calendarNote.setTime(getStringAsDate(material.getDate()));
+        }
+
         updateLabel();
+
+//        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         return view;
     }
@@ -99,6 +127,9 @@ public class NewNoteDetailFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.save_nav_bar, menu);
+        if (material.getId() != 0) {
+            inflater.inflate(R.menu.delete_nav_bar, menu);
+        }
     }
 
     @Override
@@ -106,6 +137,10 @@ public class NewNoteDetailFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.save_menu_button:
                 return saveMaterialContent();
+
+            case R.id.delete_menu_button:
+                mCallBack.deleteNoteFromDetail();
+                return true;
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -131,8 +166,12 @@ public class NewNoteDetailFragment extends Fragment {
         if (!checkTextField(etDate))
             return false;
 
+        material.setName(etName.getText().toString());
+        material.setTopic(etTopic.getText().toString());
+        material.setPartial(spinnerPartial.getSelectedItem().toString());
+        material.setDate(etDate.getText().toString());
 
-        mCallBack.saveNewNote(etName.getText().toString(), etTopic.getText().toString(), spinnerPartial.getSelectedItem().toString(), calendarNote.getTime().toString() );
+        mCallBack.saveNewNote(material);
 
         return true;
     }
@@ -142,6 +181,18 @@ public class NewNoteDetailFragment extends Fragment {
         SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat);
 
         return dateFormat.format(date);
+    }
+
+    private Date getStringAsDate(String date) {
+        String myFormat = "EEEE, MMMM dd yyyy";
+        DateFormat dateFormat = new SimpleDateFormat(myFormat);
+
+        try {
+            return dateFormat.parse(date);
+        } catch (Exception e) {
+            return new Date();
+        }
+
     }
 
     private boolean checkTextField(EditText view) {
@@ -156,7 +207,8 @@ public class NewNoteDetailFragment extends Fragment {
     }
 
     public interface OnSaveListener {
-        public void saveNewNote(String name, String topic, String partial, String date);
+        public void saveNewNote(Material material);
+        public void deleteNoteFromDetail ();
     }
 
     @Override
@@ -175,6 +227,5 @@ public class NewNoteDetailFragment extends Fragment {
             }
         }
     }
-
 
 }

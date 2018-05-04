@@ -33,12 +33,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/btn_add_note_image"
-            android:gravity="top|left"
+            android:gravity="top|start"
             android:padding="10dp"
             android:textSize="18sp"
             android:scrollbars="vertical"
             android:background="@drawable/text_box_background"
-            android:inputType="textCapSentences"/>
+            android:inputType="textCapSentences"
+            android:hint="Escribe el contenido de tu nota..."/>
 
     </RelativeLayout>
 

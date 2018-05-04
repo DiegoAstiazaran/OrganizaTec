@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorDeleteBadge">#8abac1</color>
+    <color name="colorHyperlink">#0061af</color>
 </resources>
