@@ -47,7 +47,7 @@ public class NewNoteDetailFragment extends Fragment {
     public static NewNoteDetailFragment newInstance(Material material) {
         NewNoteDetailFragment fragment = new NewNoteDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable(MATERIAL_OBJECT, material);
+        args.putSerializable(MATERIAL_OBJECT, material);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,7 +58,7 @@ public class NewNoteDetailFragment extends Fragment {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            material = bundle.getParcelable(MATERIAL_OBJECT);
+            material = (Material) bundle.getSerializable(MATERIAL_OBJECT);
         }
 
     }
@@ -207,8 +207,8 @@ public class NewNoteDetailFragment extends Fragment {
     }
 
     public interface OnSaveListener {
-        public void saveNewNote(Material material);
-        public void deleteNoteFromDetail ();
+        void saveNewNote(Material material);
+        void deleteNoteFromDetail ();
     }
 
     @Override

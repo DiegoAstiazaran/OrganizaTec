@@ -121,9 +121,8 @@ public class MaterialPagerFragment extends Fragment {
     }
 
     private String getContentType (int position) {
-        String contentType = position == 0 ? "Video" : position == 1 ? "Document" : "Note";
+        return position == 0 ? "Video" : position == 1 ? "Document" : "Note";
 
-        return contentType;
     }
 
 }

@@ -83,6 +83,7 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
             } catch (Exception e) {
 
             }
+
         } else {
             try {
                 dbOperations.updateMaterial(material);
@@ -101,6 +102,7 @@ public class NewNoteActivity extends AppCompatActivity implements NewNoteContent
     public void deleteNoteFromContent() {
         deleteMaterial();
     }
+
     public void deleteNoteFromDetail() {
         deleteMaterial();
     }

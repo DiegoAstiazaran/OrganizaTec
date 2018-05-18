@@ -25,8 +25,6 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
     private static final String CONTENT_TYPE = "content_type";
     public static final Integer NEW_MATERIAL_FRAGMENT_KEY = 2;
     public static final Integer EDIT_MATERIAL_FRAGMENT_KEY = 3;
-    public static final String MATERIAL_OBJECT = "material_object";
-    public static final String DELETED_MATERIAL_OBJECT_ID = "deleted_material_object_id";
 
     private String materialType;
     private String contentType;
@@ -216,7 +214,7 @@ public class MaterialListFragment extends Fragment implements AdapterView.OnItem
             Intent intent = new Intent(getContext(), NewDocumentVideoActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable(NewDocumentVideoActivity.MATERIAL_OBJECT, material);
+            bundle.putSerializable(NewDocumentVideoActivity.MATERIAL_OBJECT, material);
 
             intent.putExtras(bundle);
 
