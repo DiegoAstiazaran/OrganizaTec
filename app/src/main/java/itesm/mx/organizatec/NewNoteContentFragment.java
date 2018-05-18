@@ -3,11 +3,8 @@ package itesm.mx.organizatec;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,8 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
@@ -31,8 +26,6 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
 
     public static final String MATERIAL_OBJECT = "material_object";
 
-    private String materialType;
-
     OnContinueListener mCallBack;
 
     NoteImageAdapter imageAdapter;
@@ -40,9 +33,11 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
     GridView gvImages;
     Button btnAddImage;
     EditText etNoteContent;
-    ArrayList<Bitmap> noteImages;
+    ArrayList<String> noteImages;
 
     Material material;
+
+    MaterialOperations dbOperations;
 
     public NewNoteContentFragment() {
         // Required empty public constructor
@@ -51,7 +46,7 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
     public static NewNoteContentFragment newInstance(Material material) {
         NewNoteContentFragment fragment = new NewNoteContentFragment();
         Bundle args = new Bundle();
-        args.putParcelable(MATERIAL_OBJECT, material);
+        args.putSerializable(MATERIAL_OBJECT, material);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,8 +57,11 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            material = bundle.getParcelable(MATERIAL_OBJECT);
+            material = (Material) bundle.getSerializable(MATERIAL_OBJECT);
         }
+
+        dbOperations = new MaterialOperations(getContext());
+        dbOperations.open();
 
     }
 
@@ -85,13 +83,15 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
         if (material.getId() != 0) {
             etNoteContent.setText(material.getContent());
 
-            ArrayList<byte[]> listByte = material.getImages();
+//            ArrayList<String> listByte = material.getImages();
 
-            for(byte[] array: listByte)
-            {
-                Bitmap bm = BitmapFactory.decodeByteArray(array, 0, array.length); //use android built-in functions
-                noteImages.add(bm);
-            }
+            noteImages = material.getImages();
+
+//            for(Uri uri: listByte)
+//            {
+////                Bitmap bm = BitmapFactory.decodeByteArray(array, 0, array.length); //use android built-in functions
+//                noteImages.add(uri);
+//            }
 
         }
 
@@ -135,25 +135,10 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
                     return true;
                 }
 
-                ArrayList<byte[]> images = new ArrayList<>();
-
-                for(Bitmap bitmap: noteImages){
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
-
-                    Bitmap bm = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length); //use android built-in functions
-
-                    images.add(byteArray);
-
-                }
-
                 material.setContent(noteContent);
-                material.setImages(images);
+                material.setImages(noteImages);
 
                 mCallBack.continueNewNote(material);
-
-                Toast.makeText(getContext(), "CONTINUE!", Toast.LENGTH_SHORT).show();
 
                 return true;
             case R.id.delete_menu_button:
@@ -173,24 +158,17 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
         if(resultCode == RESULT_OK && requestCode == ADD_NOTE_IMAGE_CODE) {
             if (data != null) {
                 Uri contentURI = data.getData();
-                try {
-                    Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), contentURI);
-                    noteImages.add(imageBitmap);
-                    imageAdapter.notifyDataSetChanged();
-                    Toast.makeText(getContext(), "Image Saved!", Toast.LENGTH_SHORT).show();
+                noteImages.add(contentURI.toString());
+                imageAdapter.notifyDataSetChanged();
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "Failed!", Toast.LENGTH_SHORT).show();
-                }
             }
 
         }
     }
 
     public interface OnContinueListener {
-        public void continueNewNote (Material material);
-        public void deleteNoteFromContent ();
+        void continueNewNote (Material material);
+        void deleteNoteFromContent ();
     }
 
     @Override
