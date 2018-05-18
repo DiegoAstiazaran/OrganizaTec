@@ -131,7 +131,7 @@ public class NewNoteContentFragment extends Fragment implements View.OnClickList
                 String noteContent = etNoteContent.getText().toString();
 
                 if (noteContent.trim().length() == 0 && noteImages.size() == 0) {
-                    Toast.makeText(getContext(), "Please add some text or images.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Debes agregar texto o alguna imagen para continuar", Toast.LENGTH_SHORT).show();
                     return true;
                 }
 
