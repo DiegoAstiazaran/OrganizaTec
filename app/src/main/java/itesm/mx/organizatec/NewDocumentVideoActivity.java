@@ -56,7 +56,7 @@ public class NewDocumentVideoActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            originalMaterial = bundle.getParcelable(MATERIAL_OBJECT);
+            originalMaterial = (Material) bundle.getSerializable(MATERIAL_OBJECT);
             materialType = bundle.getString(MATERIAL_TYPE);
             contentType = bundle.getString(CONTENT_TYPE);
         }

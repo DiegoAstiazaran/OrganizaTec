@@ -42,7 +42,7 @@ public class MaterialDBHelper extends SQLiteOpenHelper {
                 "(" +
                 DataBaseSchema.NoteImageTable._ID + " INTEGER PRIMARY KEY, " +
                 DataBaseSchema.NoteImageTable.COLUMN_NAME_NOTE_ID + " INTEGER, " +
-                DataBaseSchema.NoteImageTable.COLUMN_NAME_IMAGE + " BLOB, " +
+                DataBaseSchema.NoteImageTable.COLUMN_NAME_IMAGE + " TEXT, " +
                 "FOREIGN KEY(" + DataBaseSchema.NoteImageTable.COLUMN_NAME_NOTE_ID + ") REFERENCES " +
                 DataBaseSchema.MaterialTable.TABLE_NAME +
                 "(" + DataBaseSchema.MaterialTable._ID + ")" +

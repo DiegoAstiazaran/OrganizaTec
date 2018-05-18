@@ -1,15 +1,13 @@
 package itesm.mx.organizatec;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 
-public class Material implements Parcelable {
+public class Material implements Serializable {
 
     private long id;
     private String materialType;
@@ -19,7 +17,7 @@ public class Material implements Parcelable {
     private String partial;
     private String date;
     private String content;
-    private ArrayList<byte[]> images;
+    private ArrayList<String> images;
 
     public Material() {}
 
@@ -35,7 +33,7 @@ public class Material implements Parcelable {
         this.images = null;
     }
 
-    public Material(long id, String materialType, String contentType, String name, String topic, String partial, String date, String content, ArrayList<byte[]> images) {
+    public Material(long id, String materialType, String contentType, String name, String topic, String partial, String date, String content, ArrayList<String> images) {
         this.id = id;
         this.materialType = materialType;
         this.contentType = contentType;
@@ -122,14 +120,13 @@ public class Material implements Parcelable {
         this.content = content;
     }
 
-    public ArrayList<byte[]> getImages() {
+    public ArrayList<String> getImages() {
         return images;
     }
 
-    public void setImages(ArrayList<byte[]> images) {
+    public void setImages(ArrayList<String> images) {
         this.images = images;
     }
-
 
     public static Comparator<Material> nameComparator = new Comparator<Material>() {
 
@@ -157,55 +154,8 @@ public class Material implements Parcelable {
 
             }
 
-            int res = date1.compareTo(date2);
-
-            return  res;
-
+            return date1.compareTo(date2);
         }
     };
 
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeLong(id);
-        out.writeString(materialType);
-        out.writeString(contentType);
-        out.writeString(name);
-        out.writeString(topic);
-        out.writeString(partial);
-        out.writeString(date);
-        out.writeString(content);
-        out.writeSerializable(images);
-    }
-
-    private Material(Parcel in) {
-        id = in.readLong();
-        materialType = in.readString();
-        contentType = in.readString();
-        name = in.readString();
-        topic = in.readString();
-        partial = in.readString();
-        date = in.readString();
-        content = in.readString();
-        images = (ArrayList<byte[]>) in.readSerializable();
-    }
-
-    public static final Parcelable.Creator<Material> CREATOR
-            = new Parcelable.Creator<Material>() {
-
-        @Override
-        public Material createFromParcel(Parcel in) {
-            return new Material(in);
-        }
-
-        @Override
-        public Material[] newArray(int size) {
-            return new Material[size];
-        }
-    };
 }
