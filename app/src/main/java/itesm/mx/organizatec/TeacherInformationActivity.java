@@ -65,7 +65,7 @@ public class TeacherInformationActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.info_menu_button:
-                Toast.makeText(this, "Aplicación desarrollada por Diego Astiazarán - diegoaat97@gmail.com", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Aplicación desarrollada por Diego Astiazarán", Toast.LENGTH_LONG).show();
                 return true;
             default:
                 // If we got here, the user's action was not recognized.
