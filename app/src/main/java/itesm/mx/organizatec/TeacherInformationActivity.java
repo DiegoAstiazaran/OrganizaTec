@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +50,30 @@ public class TeacherInformationActivity extends AppCompatActivity {
         try {
             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
         } catch (android.content.ActivityNotFoundException e) {
-            Toast.makeText(this, "There is no email client installed.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No tienes ninguna aplicación de correo instalada", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.info_nav_bar, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.info_menu_button:
+                Toast.makeText(this, "Aplicación desarrollada por Diego Astiazarán - diegoaat97@gmail.com", Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+
 }
