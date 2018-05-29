@@ -38,7 +38,7 @@
             android:textSize="18sp"
             android:scrollbars="vertical"
             android:background="@drawable/text_box_background"
-            android:inputType="textCapSentences"
+            android:inputType="textMultiLine|textCapSentences"
             android:hint="Escribe el contenido de tu nota..."/>
 
     </RelativeLayout>
